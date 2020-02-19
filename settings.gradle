@@ -1,0 +1,6 @@
+rootProject.name = 'maas-api'
+includeBuild('maas-shared') {
+    dependencySubstitution {
+        substitute module('com.rednavis:maas-shared') with project(':')
+    }
+}

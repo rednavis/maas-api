@@ -1,0 +1,3 @@
+[submodule "maas-shared"]
+	path = maas-shared
+	url = https://github.com/rednavis/maas-shared.git
