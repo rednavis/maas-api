@@ -11,11 +11,4 @@ class LibraryTest {
     Library classUnderTest = new Library();
     assertTrue(classUnderTest.someLibraryMethod(), "someLibraryMethod should return 'true'");
   }
-
-  @Test
-  void testSomeSharedLibraryMethod() {
-    Library classUnderTest = new Library();
-    assertTrue(classUnderTest.someSharedLibraryMethod(), "someSharedLibraryMethod should return 'true'");
-
-  }
 }

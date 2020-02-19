@@ -1,8 +1,9 @@
 plugins {
-    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
 }
 
 apply plugin: 'project-report' // ./gradlew clean htmlDependencyReport
+apply plugin: 'io.spring.dependency-management' // ./gradlew clean htmlDependencyReport
 apply plugin: 'jacoco'
 
 apply from: "${rootDir}/gradle/java.gradle"
@@ -38,6 +39,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.mapstruct:mapstruct'
     annotationProcessor 'org.mapstruct:mapstruct-processor'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

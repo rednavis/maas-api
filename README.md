@@ -4,3 +4,9 @@
 
 # maas-api
 Server side API of the Material Assets management system.
+
+`./gradlew clean build`
+
+`./gradlew bootRun`
+
+Open http://localhost:8080/shared
