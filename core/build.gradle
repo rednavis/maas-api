@@ -1,0 +1,7 @@
+dependencies {
+    implementation 'com.rednavis:maas-shared'
+
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'com.h2database:h2'
+}
