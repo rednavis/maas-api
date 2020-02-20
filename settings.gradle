@@ -4,3 +4,7 @@ includeBuild('maas-shared') {
         substitute module('com.rednavis:maas-shared') with project(':')
     }
 }
+include 'api'
+include 'core'
+include 'oauth2'
+
