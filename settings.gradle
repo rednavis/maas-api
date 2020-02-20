@@ -6,5 +6,5 @@ includeBuild('maas-shared') {
 }
 include 'api'
 include 'core'
-include 'oauth2'
+include 'auth'
 
