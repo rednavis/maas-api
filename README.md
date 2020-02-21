@@ -5,8 +5,16 @@
 # maas-api
 Server side API of the Material Assets management system.
 
+##Build project
 `./gradlew clean build`
 
 `./gradlew bootRun`
 
-Open http://localhost:8080/shared
+##Create dependency report
+`./gradlew clean htmlDependencyReport`
+
+##Create docker image
+`./gradlew clean bootJar jibDockerBuild`
+
+##Simpe controller
+http://localhost:8081/shared
