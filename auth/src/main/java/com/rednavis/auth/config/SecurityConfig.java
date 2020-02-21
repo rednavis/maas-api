@@ -1,69 +1,63 @@
 package com.rednavis.auth.config;
 
-import com.rednavis.auth.security.CustomUserDetailsService;
-import com.rednavis.auth.security.JwtAuthenticationEntryPoint;
-import com.rednavis.auth.security.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import static com.rednavis.core.option.RestOption.AUTH_URL;
+import static com.rednavis.core.option.RestOption.AUTH_WHITELIST;
+
+import javax.naming.AuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import reactor.core.publisher.Mono;
 
+@Slf4j
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(
-    prePostEnabled = true
-)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
+public class SecurityConfig {
 
-  private static final String[] AUTH_WHITELIST = {
-      "/swagger-resources/**",
-      "/swagger-ui.html",
-      "/v2/api-docs",
-      "/webjars/**",
-      "/h2/**"
-  };
+  //@Autowired
+  //private CustomUserDetailsService customUserDetailsService;
 
-  @Autowired
-  private CustomUserDetailsService customUserDetailsService;
-  @Autowired
-  private JwtAuthenticationEntryPoint unauthorizedHandler;
+  //@Bean
+  //public JwtAuthenticationFilter jwtAuthenticationFilter() {
+  //  return new JwtAuthenticationFilter();
+  //}
 
-  @Bean
-  public JwtAuthenticationFilter jwtAuthenticationFilter() {
-    return new JwtAuthenticationFilter();
-  }
-
-  @Bean(BeanIds.AUTHENTICATION_MANAGER)
-  @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
-  }
+  //@Bean(BeanIds.AUTHENTICATION_MANAGER)
+  //@Override
+  //public AuthenticationManager authenticationManagerBean() throws Exception {
+  //  return super.authenticationManagerBean();
+  //}
 
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
-  @Override
-  public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-    authenticationManagerBuilder
-        .userDetailsService(customUserDetailsService)
-        .passwordEncoder(passwordEncoder());
+  @Bean
+  public MapReactiveUserDetailsService userDetailsService() {
+    UserDetails user = User
+        .withUsername("admin")
+        .password(passwordEncoder().encode("password"))
+        .roles("ADMIN")
+        .build();
+    return new MapReactiveUserDetailsService(user);
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     http
+        //.httpBasic()
+        //.and()
         .cors()
         .and()
         .csrf()
@@ -73,30 +67,80 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .disable()
         .and()
         .exceptionHandling()
-        .authenticationEntryPoint(unauthorizedHandler)
+        .authenticationEntryPoint((exchange, exception) -> {
+          log.error("Responding with unauthorized error. Message - {}", exception.getMessage());
+          return Mono.error(new AuthenticationException("Sorry, You're not authorized to access this resource."));
+        })
         .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeRequests()
-        .antMatchers("/",
-            "/favicon.ico",
-            "/**/*.png",
-            "/**/*.gif",
-            "/**/*.svg",
-            "/**/*.jpg",
-            "/**/*.html",
-            "/**/*.css",
-            "/**/*.js")
+        //.sessionManagement()
+        //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        //.and()
+        .authorizeExchange()
+        .pathMatchers(AUTH_URL + "/**")
         .permitAll()
-        .antMatchers("/api/auth/**")
+        .pathMatchers(AUTH_WHITELIST.toArray(new String[AUTH_WHITELIST.size()]))
         .permitAll()
-        //.antMatchers("/api/yourEndpoint")
-        //.permitAll()
-        .antMatchers(AUTH_WHITELIST)
-        .permitAll()
-        .anyRequest()
+        .anyExchange()
         .authenticated();
-    http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+
+    //http.csrf()
+    //    .disable()
+    //    .authorizeExchange()
+    //    .pathMatchers(HttpMethod.POST, "/employees/update")
+    //    .hasRole("ADMIN")
+    //    .pathMatchers("/**")
+    //    .permitAll()
+    //    .and()
+    //    .httpBasic();
+    //return http.build();
   }
+
+  //@Override
+  //public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+  //  authenticationManagerBuilder
+  //      .userDetailsService(customUserDetailsService)
+  //      .passwordEncoder(passwordEncoder());
+  //}
+
+  //@Override
+  //protected void configure(HttpSecurity http) throws Exception {
+  //  http
+  //      //.httpBasic()
+  //      //.and()
+  //      .cors()
+  //      .and()
+  //      .csrf()
+  //      .disable()
+  //      .headers()
+  //      .frameOptions()
+  //      .disable()
+  //      .and()
+  //      .exceptionHandling()
+  //      .authenticationEntryPoint(unauthorizedHandler)
+  //      .and()
+  //      .sessionManagement()
+  //      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+  //      .and()
+  //      .authorizeRequests()
+  //      .antMatchers("/",
+  //          "/favicon.ico",
+  //          "/**/ *.png ",
+  //          "/**/*.gif",
+  //          "/**/*.svg",
+  //          "/**/*.jpg",
+  //          "/**/*.html",
+  //          "/**/*.css",
+  //          "/**/*.js")
+  //      .permitAll()
+  //      .antMatchers("/api/auth/**")
+  //      .permitAll()
+  //      //.antMatchers("/api/yourEndpoint")
+  //      //.permitAll()
+  //      .antMatchers(AUTH_WHITELIST)
+  //      .permitAll()
+  //      .anyRequest()
+  //      .authenticated();
+  //  http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+  //}
 }

@@ -1,14 +1,15 @@
 package com.rednavis.core.service;
 
 import com.rednavis.shared.dto.user.User;
+import reactor.core.publisher.Mono;
 
 public interface UserService {
 
-  User findByEmail(String email);
+  Mono<User> findByEmail(String email);
 
-  User findById(String id);
+  Mono<User> findById(String id);
 
-  User save(User user);
+  Mono<User> save(User user);
 
-  boolean existsByEmail(String email);
+  Mono<Boolean> existsByEmail(String email);
 }

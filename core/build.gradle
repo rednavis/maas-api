@@ -1,5 +1,5 @@
 dependencies {
     implementation 'com.rednavis:maas-shared'
 
-    compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 }

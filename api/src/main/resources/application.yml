@@ -8,6 +8,7 @@ spring:
       database: maas
       host: localhost
       port: 27017
+      auto-index-creation: true
 
 # App Properties
 jwt:

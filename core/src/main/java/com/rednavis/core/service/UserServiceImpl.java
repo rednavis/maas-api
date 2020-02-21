@@ -1,14 +1,12 @@
 package com.rednavis.core.service;
 
-import com.rednavis.core.entity.UserEntity;
-import com.rednavis.core.exception.NotFoundException;
 import com.rednavis.core.mapper.UserMapper;
 import com.rednavis.core.repository.UserRepository;
 import com.rednavis.shared.dto.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -20,29 +18,28 @@ public class UserServiceImpl implements UserService {
   private UserRepository userRepository;
 
   @Override
-  public User findByEmail(String email) {
-    UserEntity userEntity = userRepository.findByEmail(email)
-        .orElseThrow(() -> new NotFoundException("User not found [email: " + email + "]"));
-    return USER_MAPPER.entityToDto(userEntity);
+  public Mono<User> findByEmail(String email) {
+    return userRepository.findByEmail(email)
+        .map(userEntity -> USER_MAPPER.entityToDto(userEntity));
   }
 
   @Override
-  public User findById(String id) {
-    UserEntity userEntity = userRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("User not found [id: " + id + "]"));
-    return USER_MAPPER.entityToDto(userEntity);
+  public Mono<User> findById(String id) {
+    return userRepository.findById(id)
+        //.switchIfEmpty(Mono.error(new NotFoundException("User not found [id: " + id + "]")))
+        .map(userEntity -> USER_MAPPER.entityToDto(userEntity));
   }
 
   @Override
-  @Transactional
-  public User save(User user) {
-    UserEntity userEntity = USER_MAPPER.dtoToEntity(user);
-    userEntity = userRepository.save(userEntity);
-    return USER_MAPPER.entityToDto(userEntity);
+  public Mono<User> save(User user) {
+    return Mono.just(user)
+        .map(userMono -> USER_MAPPER.dtoToEntity(user))
+        .flatMap(userEntity -> userRepository.save(userEntity))
+        .map(userEntity -> USER_MAPPER.entityToDto(userEntity));
   }
 
   @Override
-  public boolean existsByEmail(String email) {
+  public Mono<Boolean> existsByEmail(String email) {
     return userRepository.existsByEmail(email);
   }
 }

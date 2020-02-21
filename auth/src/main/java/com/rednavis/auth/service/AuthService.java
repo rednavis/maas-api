@@ -5,12 +5,14 @@ import com.rednavis.auth.security.UserPrincipal;
 import com.rednavis.shared.dto.auth.JwtAuthenticationResponse;
 import com.rednavis.shared.dto.auth.LoginRequest;
 import com.rednavis.shared.dto.auth.SignUpRequest;
+import com.rednavis.shared.dto.auth.SignUpResponse;
+import reactor.core.publisher.Mono;
 
 public interface AuthService {
 
-  JwtAuthenticationResponse authenticateUser(LoginRequest loginRequest);
+  Mono<JwtAuthenticationResponse> authenticateUser(LoginRequest loginRequest);
 
-  String registerUser(SignUpRequest signUpRequest);
+  Mono<SignUpResponse> registerUser(SignUpRequest signUpRequest);
 
-  CurrentUser getCurrentUser(UserPrincipal userPrincipal);
+  Mono<CurrentUser> getCurrentUser(UserPrincipal userPrincipal);
 }
