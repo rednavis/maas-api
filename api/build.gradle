@@ -2,9 +2,14 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'com.google.cloud.tools.jib'
 
 dependencies {
+    implementation project(':auth')
+    implementation project(':core')
     implementation 'com.rednavis:maas-shared'
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'io.springfox:springfox-swagger2'
+    implementation 'io.springfox:springfox-swagger-ui'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 jib {
