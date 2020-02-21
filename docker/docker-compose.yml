@@ -1,6 +1,10 @@
 version: '3'
 
 services:
+  maas-mongodb:
+    extends:
+      file: docker-mongo.yml
+      service: maas-mongodb
   maas-api:
     image: maas-api:0.0.1-SNAPSHOT
     environment:

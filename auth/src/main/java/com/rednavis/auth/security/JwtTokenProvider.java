@@ -1,13 +1,11 @@
 package com.rednavis.auth.security;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.util.Date;
@@ -21,10 +19,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-  @Value("${app.jwtSecret}")
-  private String jwtSecret;
+  @Value("${jwt.secretKey}")
+  private byte[] jwtSecret;
 
-  @Value("${app.jwtExpirationInMs}")
+  @Value("${jwt.expirationInMs}")
   private int jwtExpirationInMs;
 
   /**
@@ -40,11 +38,9 @@ public class JwtTokenProvider {
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
-    byte[] apiKeySecretBytes = Encoders.BASE64.encode(jwtSecret.repeat(50)
-        .getBytes()).getBytes();
-    Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+    Key signingKey = new SecretKeySpec(jwtSecret, signatureAlgorithm.getJcaName());
     return Jwts.builder()
-        .setSubject(Long.toString(userPrincipal.getId()))
+        .setSubject(userPrincipal.getId())
         .setIssuedAt(new Date())
         .setExpiration(expiryDate)
         .signWith(signingKey, signatureAlgorithm)
@@ -57,14 +53,11 @@ public class JwtTokenProvider {
    * @param token token
    * @return
    */
-  public long getUserIdFromJwt(String token) {
-    JwtParser jwtParser = Jwts.parserBuilder()
-        .setSigningKey(Encoders.BASE64.encode(jwtSecret.repeat(50)
-            .getBytes()).getBytes())
-        .build();
-    Claims claims = jwtParser.parseClaimsJws(token)
-        .getBody();
-    return Long.parseLong(claims.getSubject());
+  public String getUserIdFromJwt(String token) {
+    JwtParser jwtParser = createJwtParser();
+    return jwtParser.parseClaimsJws(token)
+        .getBody()
+        .getSubject();
   }
 
   /**
@@ -75,10 +68,7 @@ public class JwtTokenProvider {
    */
   public boolean validateToken(String authToken) {
     try {
-      JwtParser jwtParser = Jwts.parserBuilder()
-          .setSigningKey(Encoders.BASE64.encode(jwtSecret.repeat(50)
-              .getBytes()).getBytes())
-          .build();
+      JwtParser jwtParser = createJwtParser();
       jwtParser.parseClaimsJws(authToken);
       return true;
     } catch (SignatureException ex) {
@@ -93,5 +83,11 @@ public class JwtTokenProvider {
       log.error("JWT claims string is empty.");
     }
     return false;
+  }
+
+  private JwtParser createJwtParser() {
+    return Jwts.parserBuilder()
+        .setSigningKey(jwtSecret)
+        .build();
   }
 }

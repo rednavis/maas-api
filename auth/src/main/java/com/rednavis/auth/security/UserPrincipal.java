@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rednavis.shared.dto.user.User;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
 
-  private Long id;
-  private String name;
+  @Getter
+  private String id;
   @JsonIgnore
   private String email;
   @JsonIgnore
@@ -24,14 +24,12 @@ public class UserPrincipal implements UserDetails {
    * UserPrincipal.
    *
    * @param id          id
-   * @param name        name
    * @param email       email
    * @param password    password
    * @param authorities authorities
    */
-  public UserPrincipal(Long id, String name, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+  public UserPrincipal(String id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
-    this.name = name;
     this.email = email;
     this.password = password;
     this.authorities = authorities;
@@ -46,78 +44,55 @@ public class UserPrincipal implements UserDetails {
   public static UserPrincipal create(User user) {
     List<GrantedAuthority> authorities = user.getRoles()
         .stream()
-        .map(role -> new SimpleGrantedAuthority(role.getRoleName().name()))
+        .map(role -> new SimpleGrantedAuthority(role.name()))
         .collect(Collectors.toList());
     return new UserPrincipal(
         user.getId(),
-        user.getName(),
         user.getEmail(),
         user.getPassword(),
         authorities
     );
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
+  //TODO LAV - Update user auth
   @Override
   public String getUsername() {
     return email;
   }
 
+  //TODO LAV - Update user auth
   @Override
   public String getPassword() {
     return password;
   }
 
+  //TODO LAV - Update user auth
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return authorities;
   }
 
+  //TODO LAV - Update user auth
   @Override
   public boolean isAccountNonExpired() {
     return true;
   }
 
+  //TODO LAV - Update user auth
   @Override
   public boolean isAccountNonLocked() {
     return true;
   }
 
+  //TODO LAV - Update user auth
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
   }
 
+  //TODO LAV - Update user auth
   @Override
   public boolean isEnabled() {
     return true;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    UserPrincipal that = (UserPrincipal) o;
-    return Objects.equals(id, that.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
   }
 }

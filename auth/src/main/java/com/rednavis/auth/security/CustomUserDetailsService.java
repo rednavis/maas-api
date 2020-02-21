@@ -19,8 +19,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     return UserPrincipal.create(user);
   }
 
-  public UserDetails loadUserById(long id) {
-    User user = userService.loadUserById(id);
+  public UserDetails loadUserById(String id) {
+    User user = userService.findById(id);
     return UserPrincipal.create(user);
   }
 }

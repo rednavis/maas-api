@@ -1,16 +1,14 @@
 package com.rednavis.auth.security;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.rednavis.shared.dto.user.RoleEnum;
+import java.util.Set;
+import lombok.Getter;
 
-@Target({ElementType.PARAMETER, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@AuthenticationPrincipal
-public @interface CurrentUser {
+@Getter
+public class CurrentUser {
 
+  private String firstName;
+  private String lastName;
+  private String email;
+  private Set<RoleEnum> roles;
 }

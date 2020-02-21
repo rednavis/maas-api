@@ -1,17 +1,17 @@
 package com.rednavis.auth.service;
 
 import com.rednavis.auth.exception.ConflictException;
+import com.rednavis.auth.mapper.CurrentUserMapper;
+import com.rednavis.auth.security.CurrentUser;
 import com.rednavis.auth.security.JwtTokenProvider;
 import com.rednavis.auth.security.UserPrincipal;
-import com.rednavis.core.service.RoleService;
 import com.rednavis.core.service.UserService;
 import com.rednavis.shared.dto.auth.JwtAuthenticationResponse;
 import com.rednavis.shared.dto.auth.LoginRequest;
 import com.rednavis.shared.dto.auth.SignUpRequest;
-import com.rednavis.shared.dto.user.Role;
-import com.rednavis.shared.dto.user.RoleName;
+import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.dto.user.User;
-import java.util.Collections;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,12 +25,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+  private static final CurrentUserMapper CURRENT_USER_MAPPER = CurrentUserMapper.CURRENT_USER_MAPPER;
+
   @Autowired
   private AuthenticationManager authenticationManager;
   @Autowired
   private UserService userService;
-  @Autowired
-  private RoleService roleService;
   @Autowired
   private PasswordEncoder passwordEncoder;
   @Autowired
@@ -43,27 +43,32 @@ public class AuthServiceImpl implements AuthService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String jwt = tokenProvider.generateToken(authentication);
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-    log.info("User with [email: {}] has logged in", userPrincipal.getEmail());
+    log.info("User with [email: {}] has logged in", userPrincipal.getUsername());
     return new JwtAuthenticationResponse(jwt);
   }
 
   @Override
-  public long registerUser(SignUpRequest signUpRequest) {
+  public String registerUser(SignUpRequest signUpRequest) {
     if (userService.existsByEmail(signUpRequest.getEmail())) {
       throw new ConflictException("Email [email: " + signUpRequest.getEmail() + "] is already taken");
     }
 
     User user = User.builder()
+        .firstName(signUpRequest.getFirstName())
+        .lastName(signUpRequest.getLastName())
         .email(signUpRequest.getEmail())
-        .name(signUpRequest.getName())
-        .password(signUpRequest.getPassword())
+        .password(passwordEncoder.encode(signUpRequest.getPassword()))
+        .roles(Set.of(RoleEnum.ROLE_USER))
         .build();
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    Role userRole = roleService.findByRoleName(RoleName.ROLE_USER);
-    user.setRoles(Collections.singleton(userRole));
 
     log.info("Successfully registered user with [email: {}]", user.getEmail());
     return userService.save(user)
         .getId();
+  }
+
+  @Override
+  public CurrentUser getCurrentUser(UserPrincipal userPrincipal) {
+    User user = userService.findById(userPrincipal.getId());
+    return CURRENT_USER_MAPPER.userToCurrentUser(user);
   }
 }

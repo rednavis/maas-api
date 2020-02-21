@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  maas-mongodb:
+    image: mongo:4.2.3
+    restart: always
+    ports:
+      - '27017:27017'

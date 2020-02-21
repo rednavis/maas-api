@@ -6,7 +6,7 @@ public interface UserService {
 
   User findByEmail(String email);
 
-  User loadUserById(long id);
+  User findById(String id);
 
   User save(User user);
 

@@ -24,7 +24,7 @@ public class AuthController {
   }
 
   @PostMapping("/signup")
-  public Long signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+  public String signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
     return authService.registerUser(signUpRequest);
   }
 }

@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService {
   private UserRepository userRepository;
 
   @Override
-  @Transactional
   public User findByEmail(String email) {
     UserEntity userEntity = userRepository.findByEmail(email)
         .orElseThrow(() -> new NotFoundException("User not found [email: " + email + "]"));
@@ -28,14 +27,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional
-  public User loadUserById(long id) {
+  public User findById(String id) {
     UserEntity userEntity = userRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("User not found [id: " + id + "]"));
     return USER_MAPPER.entityToDto(userEntity);
   }
 
   @Override
+  @Transactional
   public User save(User user) {
     UserEntity userEntity = USER_MAPPER.dtoToEntity(user);
     userEntity = userRepository.save(userEntity);

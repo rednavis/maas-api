@@ -6,7 +6,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {RoleMapper.class})
+@Mapper
 public interface UserMapper {
 
   UserMapper USER_MAPPER = Mappers.getMapper(UserMapper.class);

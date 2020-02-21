@@ -11,8 +11,8 @@ ext {
     mapstructVersion = '1.3.1.Final'
     springBootVersion = '2.2.4.RELEASE'
     jjwtVersion = '0.11.0'
-    swaggerVersion='2.9.2'
-    h2Version='1.4.200'
+    swaggerVersion = '2.9.2'
+    h2Version = '1.4.200'
     jupiterVersion = '5.6.0'
 }
 
@@ -20,19 +20,12 @@ allprojects {
     apply plugin: 'project-report'
     // needed because of multi-module configuration
     apply plugin: 'jacoco'
+    apply plugin: 'io.spring.dependency-management'
 
     repositories {
         jcenter()
         mavenCentral()
     }
-}
-
-// assumed that all subprojects are java-based modules
-subprojects {
-    apply from: "${rootDir}/gradle/java.gradle"
-    apply from: "${rootDir}/gradle/checkstyle.gradle"
-
-    apply plugin: 'io.spring.dependency-management'
 
     dependencyManagement {
         dependencies {
@@ -43,7 +36,7 @@ subprojects {
 
             dependency "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
             dependency "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
-            dependency "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter-data-mongodb:${springBootVersion}"
 
             dependency "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
             dependency "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
@@ -57,6 +50,12 @@ subprojects {
             dependency "org.junit.jupiter:junit-jupiter:${jupiterVersion}"
         }
     }
+}
+
+// assumed that all subprojects are java-based modules
+subprojects {
+    apply from: "${rootDir}/gradle/java.gradle"
+    apply from: "${rootDir}/gradle/checkstyle.gradle"
 
     dependencies {
         implementation 'org.projectlombok:lombok'
