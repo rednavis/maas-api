@@ -1,42 +1,85 @@
 package com.rednavis.api.config;
 
+import static com.rednavis.core.option.RestOption.AUTH_URL_PATTERN;
+import static com.rednavis.core.option.RestOption.USER_URL_PATTERN;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.Builder;
+import lombok.Getter;
+import org.springdoc.core.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 
 @Configuration
-@EnableSwagger2WebFlux
+@SuppressWarnings("AbbreviationAsWordInName")
 public class SwaggerConfig {
 
+  private static final String[] PACKAGED_TO_MATCH = {"com.rednavis.api.controller"};
+
   /**
-   * docket.
+   * authOpenApi.
    *
    * @return
    */
   @Bean
-  public Docket docket() {
-    return new Docket(DocumentationType.SWAGGER_2)
-        .select()
-        .apis(RequestHandlerSelectors.any())
-        .paths(PathSelectors.any())
-        .build()
-        .apiInfo(metaData())
-        .pathMapping("/");
+  public GroupedOpenApi authOpenApi() {
+    GroupInfo groupInfo = GroupInfo.builder()
+        .paths(new String[] {AUTH_URL_PATTERN})
+        .group("auth")
+        .build();
+    return createNewGroup(groupInfo);
   }
 
-  private ApiInfo metaData() {
-    return new ApiInfoBuilder()
-        .title("MAAS-API")
-        .description("MAAS-API REST API description")
-        .version("1.0.0")
-        .license("GNU General Public License v3")
-        .licenseUrl("https://www.gnu.org/licenses/gpl-3.0.html")
+  /**
+   * userOpenApi.
+   *
+   * @return
+   */
+  @Bean
+  public GroupedOpenApi userOpenApi() {
+    GroupInfo groupInfo = GroupInfo.builder()
+        .paths(new String[] {USER_URL_PATTERN})
+        .group("user")
         .build();
+    return createNewGroup(groupInfo);
+  }
+
+  /**
+   * customOpenAPI.
+   *
+   * @param appVersion appVersion
+   * @return
+   */
+  @Bean
+  public OpenAPI customOpenAPI(@Value("${springdoc.version}") String appVersion) {
+    return new OpenAPI()
+        .components(new Components().addSecuritySchemes("basicScheme",
+            new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")))
+        .info(new Info().title("Maas API")
+            .version(appVersion)
+            .description("MAAS-API REST API description")
+            .license(new License().name("GNU General Public License v3")
+                .url("https://www.gnu.org/licenses/gpl-3.0.html")));
+  }
+
+  private GroupedOpenApi createNewGroup(GroupInfo groupInfo) {
+    return GroupedOpenApi.builder()
+        .setGroup(groupInfo.getGroup())
+        .pathsToMatch(groupInfo.getPaths())
+        .packagesToScan(PACKAGED_TO_MATCH)
+        .build();
+  }
+
+  @Getter
+  @Builder
+  static class GroupInfo {
+
+    private String[] paths;
+    private String group;
   }
 }

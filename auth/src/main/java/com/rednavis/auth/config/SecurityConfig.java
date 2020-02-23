@@ -1,6 +1,6 @@
 package com.rednavis.auth.config;
 
-import static com.rednavis.core.option.RestOption.AUTH_URL;
+import static com.rednavis.core.option.RestOption.AUTH_URL_PATTERN;
 import static com.rednavis.core.option.RestOption.AUTH_WHITELIST;
 
 import javax.naming.AuthenticationException;
@@ -38,11 +38,21 @@ public class SecurityConfig {
   //  return super.authenticationManagerBean();
   //}
 
+  /**
+   * passwordEncoder.
+   *
+   * @return
+   */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * userDetailsService.
+   *
+   * @return
+   */
   @Bean
   public MapReactiveUserDetailsService userDetailsService() {
     UserDetails user = User
@@ -53,6 +63,12 @@ public class SecurityConfig {
     return new MapReactiveUserDetailsService(user);
   }
 
+  /**
+   * springSecurityFilterChain.
+   *
+   * @param http http
+   * @return
+   */
   @Bean
   public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     http
@@ -76,7 +92,7 @@ public class SecurityConfig {
         //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         //.and()
         .authorizeExchange()
-        .pathMatchers(AUTH_URL + "/**")
+        .pathMatchers(AUTH_URL_PATTERN)
         .permitAll()
         .pathMatchers(AUTH_WHITELIST.toArray(new String[AUTH_WHITELIST.size()]))
         .permitAll()

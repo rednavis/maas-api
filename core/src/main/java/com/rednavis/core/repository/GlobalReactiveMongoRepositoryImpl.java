@@ -15,6 +15,12 @@ public class GlobalReactiveMongoRepositoryImpl<T, ID extends Serializable> exten
   private MongoEntityInformation<T, ID> entityInformation;
   private ReactiveMongoOperations mongoOperations;
 
+  /**
+   * GlobalReactiveMongoRepositoryImpl.
+   *
+   * @param entityInformation entityInformation
+   * @param mongoOperations   mongoOperations
+   */
   public GlobalReactiveMongoRepositoryImpl(MongoEntityInformation<T, ID> entityInformation, ReactiveMongoOperations mongoOperations) {
     super(entityInformation, mongoOperations);
     this.entityInformation = entityInformation;

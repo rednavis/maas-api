@@ -10,6 +10,22 @@ spring:
       port: 27017
       auto-index-creation: true
 
+springdoc:
+  version: '@springdoc.version@'
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    displayRequestDuration: true
+
+#logging:
+#  level:
+#    web: TRACE
+#    org.springframework.web: TRACE
+
 # App Properties
 jwt:
   # Random string - EnUKivP4cfQbkTsfgRCeSW9JLVHYDAaHuNrOrLpc6EWZAholrGkme6hHvTM2F1WZVFFsQKyteIogxveFPHLIiRDC1MCmPbtr0wnvCqdbK2YUeYZcRteU2YfAwAbiCf9NN9VGJuyB5CmBgUn4STI3DJk8O3Ivt506k08s9AgZtxM07ImvJqKq0xd1MCD63q2205Dez7I68cgRkEwEBNLfl6cKROzJn6EsO5r8ieF515PwgF8IWFVOKY9JXvDSDSLz8AAb296JqrmADpD8D2SViBUBzo0k6J2RqK2SnYiquE2b1vCqUJs9eUfYM59jeFpBkEyP2W2M93DcLRKZq85OJ8QToxEgfYDrBaNeAebLtcwDBizptGdfAvQSrqRjFNAJtUPvLfPVoUVF5uNFMzVuVLLmFXz6ICWygOjh1iuRrWleyJLTfWrTmaYIsDLQD2KIVmuIq0ZH98pyoWy3lORmUWv9weXojWGkU03UzS5iMUbmxoEeempjXhZSgZFEo8LZ

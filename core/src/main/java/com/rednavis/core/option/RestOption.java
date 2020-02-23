@@ -7,12 +7,14 @@ import lombok.experimental.UtilityClass;
 public class RestOption {
 
   public static final String AUTH_URL = "/api/auth";
+  public static final String AUTH_URL_PATTERN = AUTH_URL + "/**";
   public static final String USER_URL = "/api/users";
+  public static final String USER_URL_PATTERN = USER_URL + "/**";
 
   public static final List<String> AUTH_WHITELIST = List.of(
       "/swagger-resources/**",
       "/swagger-ui.html",
-      "/v2/api-docs",
+      "/v3/api-docs/**",
       "/webjars/**",
       "/",
       "/favicon.ico",
