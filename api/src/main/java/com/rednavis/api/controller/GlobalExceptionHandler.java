@@ -1,13 +1,11 @@
 package com.rednavis.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.rednavis.api.exception.BadRequestException;
-import com.rednavis.auth.exception.ConflictException;
+import com.rednavis.api.dto.ErrorResponse;
+import com.rednavis.core.exception.BadRequestException;
+import com.rednavis.core.exception.ConflictException;
 import com.rednavis.core.exception.MaasAppException;
 import com.rednavis.core.exception.NotFoundException;
-import com.rednavis.shared.dto.auth.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,8 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler({BadRequestException.class, NoSuchFieldException.class, NumberFormatException.class, JsonProcessingException.class,
-      IllegalArgumentException.class, PropertyReferenceException.class})
+  @ExceptionHandler({BadRequestException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse runtime(RuntimeException exception) {
     log.error(exception.getMessage());
@@ -40,7 +37,7 @@ public class GlobalExceptionHandler {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), conflictException.getMessage());
   }
 
-  @ExceptionHandler({MaasAppException.class, HttpClientErrorException.class})
+  @ExceptionHandler({MaasAppException.class})
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse httpClientErrorHandler(HttpClientErrorException httpClientErrorException) {
     log.error(httpClientErrorException.getMessage());

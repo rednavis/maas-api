@@ -7,4 +7,6 @@ dependencies {
 
     implementation 'io.jsonwebtoken:jjwt-impl'
     implementation 'io.jsonwebtoken:jjwt-jackson'
+
+    implementation 'edu.vt.middleware:vt-password'
 }

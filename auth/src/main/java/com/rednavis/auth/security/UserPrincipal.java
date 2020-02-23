@@ -1,9 +1,10 @@
 package com.rednavis.auth.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.dto.user.User;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,21 +19,22 @@ public class UserPrincipal implements UserDetails {
   private String email;
   @JsonIgnore
   private String password;
-  private Collection<? extends GrantedAuthority> authorities;
+  @Getter
+  private Set<RoleEnum> roles;
 
   /**
    * UserPrincipal.
    *
-   * @param id          id
-   * @param email       email
-   * @param password    password
-   * @param authorities authorities
+   * @param id       id
+   * @param email    email
+   * @param password password
+   * @param roles    roles
    */
-  public UserPrincipal(String id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+  public UserPrincipal(String id, String email, String password, Set<RoleEnum> roles) {
     this.id = id;
     this.email = email;
     this.password = password;
-    this.authorities = authorities;
+    this.roles = roles;
   }
 
   /**
@@ -42,15 +44,11 @@ public class UserPrincipal implements UserDetails {
    * @return
    */
   public static UserPrincipal create(User user) {
-    List<GrantedAuthority> authorities = user.getRoles()
-        .stream()
-        .map(role -> new SimpleGrantedAuthority(role.name()))
-        .collect(Collectors.toList());
     return new UserPrincipal(
         user.getId(),
         user.getEmail(),
         user.getPassword(),
-        authorities
+        user.getRoles()
     );
   }
 
@@ -69,7 +67,9 @@ public class UserPrincipal implements UserDetails {
   //TODO LAV - Update user auth
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return authorities;
+    return roles.stream()
+        .map(role -> new SimpleGrantedAuthority(role.name()))
+        .collect(Collectors.toList());
   }
 
   //TODO LAV - Update user auth

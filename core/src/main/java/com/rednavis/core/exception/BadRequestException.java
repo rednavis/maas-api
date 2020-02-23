@@ -1,4 +1,4 @@
-package com.rednavis.api.exception;
+package com.rednavis.core.exception;
 
 public class BadRequestException extends RuntimeException {
 

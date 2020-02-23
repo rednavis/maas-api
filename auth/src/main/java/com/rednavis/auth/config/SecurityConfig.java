@@ -1,20 +1,19 @@
 package com.rednavis.auth.config;
 
-import static com.rednavis.core.option.RestOption.AUTH_URL_PATTERN;
 import static com.rednavis.core.option.RestOption.AUTH_WHITELIST;
 
-import javax.naming.AuthenticationException;
+import com.rednavis.auth.security.AuthenticationManager;
+import com.rednavis.auth.security.CustomUserDetailsService;
+import com.rednavis.auth.security.SecurityContextRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
 
@@ -24,99 +23,87 @@ import reactor.core.publisher.Mono;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
-  //@Autowired
-  //private CustomUserDetailsService customUserDetailsService;
+  @Autowired
+  private CustomUserDetailsService customUserDetailsService;
 
-  //@Bean
-  //public JwtAuthenticationFilter jwtAuthenticationFilter() {
-  //  return new JwtAuthenticationFilter();
-  //}
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-  //@Bean(BeanIds.AUTHENTICATION_MANAGER)
-  //@Override
-  //public AuthenticationManager authenticationManagerBean() throws Exception {
-  //  return super.authenticationManagerBean();
-  //}
+  @Autowired
+  private SecurityContextRepository securityContextRepository;
 
   /**
-   * passwordEncoder.
-   *
-   * @return
-   */
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  /**
-   * userDetailsService.
-   *
-   * @return
-   */
-  @Bean
-  public MapReactiveUserDetailsService userDetailsService() {
-    UserDetails user = User
-        .withUsername("admin")
-        .password(passwordEncoder().encode("password"))
-        .roles("ADMIN")
-        .build();
-    return new MapReactiveUserDetailsService(user);
-  }
-
-  /**
-   * springSecurityFilterChain.
+   * securityWebFilterChain.
    *
    * @param http http
    * @return
    */
   @Bean
-  public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-    http
-        //.httpBasic()
-        //.and()
-        .cors()
-        .and()
-        .csrf()
-        .disable()
-        .headers()
-        .frameOptions()
-        .disable()
-        .and()
+  public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    return http
         .exceptionHandling()
-        .authenticationEntryPoint((exchange, exception) -> {
-          log.error("Responding with unauthorized error. Message - {}", exception.getMessage());
-          return Mono.error(new AuthenticationException("Sorry, You're not authorized to access this resource."));
-        })
-        .and()
-        //.sessionManagement()
-        //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        //.and()
+        .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
+          swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        })).accessDeniedHandler((swe, e) -> {
+          return Mono.fromRunnable(() -> {
+            swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+          });
+        }).and()
+        .csrf().disable()
+        .formLogin().disable()
+        .httpBasic().disable()
+        .authenticationManager(authenticationManager)
+        .securityContextRepository(securityContextRepository)
         .authorizeExchange()
-        .pathMatchers(AUTH_URL_PATTERN)
-        .permitAll()
-        .pathMatchers(AUTH_WHITELIST.toArray(new String[AUTH_WHITELIST.size()]))
-        .permitAll()
-        .anyExchange()
-        .authenticated();
-    return http.build();
-
-    //http.csrf()
-    //    .disable()
-    //    .authorizeExchange()
-    //    .pathMatchers(HttpMethod.POST, "/employees/update")
-    //    .hasRole("ADMIN")
-    //    .pathMatchers("/**")
-    //    .permitAll()
-    //    .and()
-    //    .httpBasic();
-    //return http.build();
+        .pathMatchers(HttpMethod.OPTIONS).permitAll()
+        .pathMatchers("/login").permitAll()
+        .pathMatchers(AUTH_WHITELIST.toArray(new String[AUTH_WHITELIST.size()])).permitAll()
+        .anyExchange().authenticated()
+        .and().build();
   }
 
-  //@Override
-  //public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-  //  authenticationManagerBuilder
-  //      .userDetailsService(customUserDetailsService)
-  //      .passwordEncoder(passwordEncoder());
+  //@Bean
+  //public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+  //  http
+  //      .httpBasic()
+  //      .and()
+  //.cors()
+  //.and()
+  //.csrf()
+  //.disable()
+  //.headers()
+  //.frameOptions()
+  //.disable()
+  //.and()
+  //.exceptionHandling()
+  //.authenticationEntryPoint((exchange, exception) -> {
+  //  log.error("Responding with unauthorized error. Message - {}", exception.getMessage());
+  //  return Mono.error(new AuthenticationException("Sorry, You're not authorized to access this resource."));
+  //})
+  //.and()
+  //.sessionManagement()
+  //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+  //.and()
+  //.authorizeExchange()
+  //.pathMatchers(AUTH_URL_PATTERN)
+  //.permitAll()
+  //.pathMatchers(AUTH_WHITELIST.toArray(new String[AUTH_WHITELIST.size()]))
+  //.permitAll()
+  //.anyExchange()
+  //.authenticated();
+  //return http.build();
+
+  //http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+  //http.csrf()
+  //    .disable()
+  //    .authorizeExchange()
+  //    .pathMatchers(HttpMethod.POST, "/employees/update")
+  //    .hasRole("ADMIN")
+  //    .pathMatchers("/**")
+  //    .permitAll()
+  //    .and()
+  //    .httpBasic();
+  //return http.build();
   //}
 
   //@Override

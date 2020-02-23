@@ -1,4 +1,4 @@
-package com.rednavis.auth.exception;
+package com.rednavis.core.exception;
 
 public class ConflictException extends RuntimeException {
 
