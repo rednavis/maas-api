@@ -2,6 +2,7 @@ package com.rednavis.api.hadler;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+import com.rednavis.core.dto.CurrentUser;
 import com.rednavis.core.service.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,9 +24,10 @@ public class UserHandler {
    * @return
    */
   public Mono<ServerResponse> getCurrentUser(ServerRequest request) {
+    Mono<CurrentUser> currentUserMono = currentUserService.getCurrentUser();
     return ServerResponse.ok()
         .contentType(APPLICATION_JSON)
-        .body(BodyInserters.fromValue(currentUserService.getCurrentUser()));
+        .body(BodyInserters.fromProducer(currentUserMono, CurrentUser.class));
   }
 
   /**

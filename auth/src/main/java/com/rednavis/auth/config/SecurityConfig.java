@@ -37,6 +37,8 @@ public class SecurityConfig {
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
     return http
+        .headers().frameOptions().disable()
+        .and()
         .exceptionHandling()
         .authenticationEntryPoint((exchange, exception) -> Mono.fromRunnable(() -> {
           exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -45,11 +47,11 @@ public class SecurityConfig {
           exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
         }))
         .and()
-        .headers().frameOptions().disable().and()
         .cors().disable()
         .csrf().disable()
         .formLogin().disable()
         .httpBasic().disable()
+        .logout().disable()
         .authenticationManager(authenticationManager)
         .securityContextRepository(securityContextRepository)
         .authorizeExchange()
