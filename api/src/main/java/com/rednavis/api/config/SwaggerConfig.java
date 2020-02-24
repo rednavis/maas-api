@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.Builder;
 import lombok.Getter;
 import org.springdoc.core.GroupedOpenApi;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -34,14 +33,14 @@ import org.springframework.context.annotation.Configuration;
 @SuppressWarnings("AbbreviationAsWordInName")
 public class SwaggerConfig {
 
-  private static final String[] PACKAGED_TO_MATCH = {"com.rednavis.api.controller"};
+  private static final String[] PACKAGED_TO_MATCH = {"com.rednavis.api.config"};
 
   /**
    * authOpenApi.
    *
    * @return
    */
-  @Bean
+  //@Bean
   public GroupedOpenApi authOpenApi() {
     GroupInfo groupInfo = GroupInfo.builder()
         .paths(new String[] {AUTH_URL_PATTERN})
@@ -55,7 +54,7 @@ public class SwaggerConfig {
    *
    * @return
    */
-  @Bean
+  //@Bean
   public GroupedOpenApi userOpenApi() {
     GroupInfo groupInfo = GroupInfo.builder()
         .paths(new String[] {USER_URL_PATTERN})

@@ -1,5 +1,6 @@
 dependencies {
-    implementation 'com.rednavis:maas-shared'
+    compile 'com.rednavis:maas-shared'
 
-    compile 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    compile 'org.springframework.boot:spring-boot-starter-webflux'
+    compile 'org.springframework.boot:spring-boot-starter-security'
 }

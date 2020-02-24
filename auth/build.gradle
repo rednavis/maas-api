@@ -1,9 +1,6 @@
 dependencies {
     implementation project(':core')
-    implementation 'com.rednavis:maas-shared'
-
-    compile 'org.springframework.boot:spring-boot-starter-webflux'
-    compile 'org.springframework.boot:spring-boot-starter-security'
+    implementation project(':database')
 
     implementation 'io.jsonwebtoken:jjwt-impl'
     implementation 'io.jsonwebtoken:jjwt-jackson'

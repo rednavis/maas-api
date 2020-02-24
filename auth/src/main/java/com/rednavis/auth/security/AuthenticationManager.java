@@ -1,46 +1,59 @@
 package com.rednavis.auth.security;
 
-import com.rednavis.shared.dto.user.RoleEnum;
-import io.jsonwebtoken.Claims;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.rednavis.core.dto.CurrentUser;
+import com.rednavis.database.service.UserService;
+import com.rednavis.shared.dto.user.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+@Slf4j
 @Component
 public class AuthenticationManager implements ReactiveAuthenticationManager {
 
   @Autowired
-  private JWTUtil jwtUtil;
+  private JwtTokenProvider jwtTokenProvider;
+  @Autowired
+  private UserService userService;
 
   @Override
-  @SuppressWarnings("unchecked")
-  public Mono<Authentication> authenticate(Authentication authentication) {
-    String authToken = authentication.getCredentials().toString();
-    String username;
-    try {
-      username = jwtUtil.getUsernameFromToken(authToken);
-    } catch (Exception e) {
-      username = null;
+  public Mono<Authentication> authenticate(final Authentication authentication) {
+    if (authentication.isAuthenticated()) {
+      return Mono.just(authentication);
     }
-    if (username != null && jwtUtil.validateToken(authToken)) {
-      Claims claims = jwtUtil.getAllClaimsFromToken(authToken);
-      List<String> rolesMap = claims.get("role", List.class);
-      List<RoleEnum> roles = new ArrayList<>();
-      for (String rolemap : rolesMap) {
-        roles.add(RoleEnum.valueOf(rolemap));
-      }
-      UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
-          roles.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList()));
-      return Mono.just(auth);
-    } else {
-      return Mono.empty();
+    return Mono.just(authentication)
+        .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
+        .cast(UsernamePasswordAuthenticationToken.class)
+        .flatMap(this::authenticateToken)
+        .publishOn(Schedulers.parallel())
+        .onErrorResume(e -> raiseBadCredentials())
+        .map(user -> createAuthentication(user, authentication));
+  }
+
+  private Authentication createAuthentication(User user, Authentication authentication) {
+    UserDetails userDetails = CurrentUser.create(user);
+    return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+  }
+
+  private Mono<User> authenticateToken(final UsernamePasswordAuthenticationToken authenticationToken) {
+    String authToken = authenticationToken.getCredentials()
+        .toString();
+    log.info("authToken: {}", authToken);
+    if (!jwtTokenProvider.validateToken(authToken)) {
+      return raiseBadCredentials();
     }
+    String userId = jwtTokenProvider.getUserIdFromJwt(authToken);
+    return userService.findById(userId);
+  }
+
+  private <T> Mono<T> raiseBadCredentials() {
+    return Mono.error(new BadCredentialsException("Invalid Credentials"));
   }
 }

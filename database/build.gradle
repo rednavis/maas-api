@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':core')
+
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+}

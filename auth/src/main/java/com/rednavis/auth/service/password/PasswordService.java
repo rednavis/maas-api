@@ -1,17 +1,17 @@
 package com.rednavis.auth.service.password;
 
 import java.util.List;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Service for work with passwords. Checking the password for validity. Generate a token for the password. Validation of the token for a given
- * password
+ * Service for work with passwords. Checking the password for validity. Generate a token for the password.
+ *
+ * <p>Validation of the token for a given password
  */
-public interface PasswordService extends PasswordEncoder {
+public interface PasswordService {
 
   List<String> checkPasswordComplexity(String password);
 
-  String generatePassword(String password) throws CannotPerformOperationException;
+  String generatePassword(String password);
 
-  boolean validatePassword(String passwordDb, String password) throws CannotPerformOperationException, InvalidHashException;
+  boolean validatePassword(String passwordDb, String password);
 }

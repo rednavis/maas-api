@@ -1,6 +1,6 @@
 package com.rednavis.auth.service.password;
 
-public class CannotPerformOperationException extends Exception {
+class CannotPerformOperationException extends Exception {
 
   public CannotPerformOperationException(String message) {
     super(message);

@@ -28,27 +28,22 @@ public class PasswordServiceImpl implements PasswordService {
   }
 
   @Override
-  public String generatePassword(String password) throws CannotPerformOperationException {
-    return PasswordUtils.createHash(password);
-  }
-
-  @Override
-  public boolean validatePassword(String passwordDb, String password) throws CannotPerformOperationException, InvalidHashException {
-    return PasswordUtils.verifyPassword(password, passwordDb);
-  }
-
-  @Override
-  public String encode(CharSequence rawPassword) {
+  public String generatePassword(String password) {
     try {
-      return generatePassword(rawPassword.toString());
+      return PasswordUtils.createHash(password);
     } catch (CannotPerformOperationException ex) {
-      log.error("Error generate password", ex);
-      throw new RuntimeException("Error generate password", ex);
+      log.error("Can't generate password [password: {}]", password, ex);
+      throw new RuntimeException("Can't validate [password: " + password + "]");
     }
   }
 
   @Override
-  public boolean matches(CharSequence cs, String string) {
-    return encode(cs).equals(string);
+  public boolean validatePassword(String passwordDb, String password) {
+    try {
+      return PasswordUtils.verifyPassword(password, passwordDb);
+    } catch (CannotPerformOperationException | InvalidHashException ex) {
+      log.error("Can't validate password [password: {}]", password, ex);
+      throw new RuntimeException("Can't validate [password: " + password + "]");
+    }
   }
 }

@@ -24,37 +24,26 @@ public class PasswordConfig {
 
   @Value("${password.validation.minLength}")
   private int minLength;
-
   @Value("${password.validation.maxLength}")
   private int maxLength;
-
   @Value("${password.validation.whitespaceAllowed}")
   private boolean whitespaceAllowed;
-
   @Value("${password.validation.requireLeastNumberOfDigits}")
   private int requireLeastNumberOfDigits;
-
   @Value("${password.validation.requireLeastNumberOfAlphabeticals}")
   private int requireLeastNumberOfAlphabeticals;
-
   @Value("${password.validation.requireLeastNumberOfNotAlphanumerics}")
   private int requireLeastNumberOfNotAlphanumerics;
-
   @Value("${password.validation.requireLeastNumberOfLowercases}")
   private int requireLeastNumberOfLowercases;
-
   @Value("${password.validation.requireLeastNumberOfUppercases}")
   private int requireLeastNumberOfUppercases;
-
   @Value("${password.validation.allowAlphabeticalSequence}")
   private boolean allowAlphabeticalSequence;
-
   @Value("${password.validation.allowNumericalSequence}")
   private boolean allowNumericalSequence;
-
   @Value("${password.validation.allowQwertySequence}")
   private boolean allowQwertySequence;
-
   @Value("${password.validation.allowRepeatCharactersMax}")
   private int allowRepeatCharactersMax;
 
