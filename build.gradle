@@ -99,16 +99,7 @@ task codeCoverageReport(type: JacocoReport) {
 
 // https://github.com/codecov/example-gradle#-do-you-support-multi-module-projects
 codeCoverageReport.dependsOn {
-    dependsOn gradle.includedBuild('maas-shared').task(':jacocoTestReport')
     subprojects*.test
-}
-
-clean {
-    dependsOn gradle.includedBuild('maas-shared').task(':clean')
-}
-
-build {
-    dependsOn gradle.includedBuild('maas-shared').task(':build')
 }
 
 wrapper {
