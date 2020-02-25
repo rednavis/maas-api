@@ -10,7 +10,6 @@ Server side API of the Material Assets management system.
 - Spring Boot
 - Spring Data
 - Spring Security
-- H2
 - Gradle
 - Log4j
 - Lombok

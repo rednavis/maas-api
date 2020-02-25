@@ -1,7 +1,7 @@
 package com.rednavis.api.config;
 
-import static com.rednavis.core.option.RestOption.AUTH_URL_PATTERN;
-import static com.rednavis.core.option.RestOption.USER_URL_PATTERN;
+import static com.rednavis.shared.RestUrl.AUTH_URL_PATTERN;
+import static com.rednavis.shared.RestUrl.USER_URL_PATTERN;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

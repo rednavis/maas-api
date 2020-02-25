@@ -1,10 +1,10 @@
 package com.rednavis.auth.config;
 
-import static com.rednavis.core.option.RestOption.AUTH_URL_PATTERN;
-import static com.rednavis.core.option.RestOption.AUTH_WHITELIST;
+import static com.rednavis.shared.RestUrl.AUTH_URL_PATTERN;
 
 import com.rednavis.auth.security.AuthenticationManager;
 import com.rednavis.auth.security.SecurityContextRepository;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +22,22 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
+
+  private static final List<String> AUTH_WHITELIST = List.of(
+      "/swagger-resources/**",
+      "/swagger-ui.html",
+      "/v3/api-docs/**",
+      "/webjars/**",
+      "/",
+      "/favicon.ico",
+      "/**/*.png",
+      "/**/*.gif",
+      "/**/*.svg",
+      "/**/*.jpg",
+      "/**/*.html",
+      "/**/*.css",
+      "/**/*.js"
+  );
 
   @Autowired
   private AuthenticationManager authenticationManager;
