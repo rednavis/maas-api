@@ -1,4 +1,4 @@
-package com.rednavis.auth.security;
+package com.rednavis.auth.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;

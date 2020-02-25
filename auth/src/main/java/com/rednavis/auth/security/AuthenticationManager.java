@@ -1,5 +1,6 @@
 package com.rednavis.auth.security;
 
+import com.rednavis.auth.jwt.JwtTokenProvider;
 import com.rednavis.core.dto.CurrentUser;
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.User;

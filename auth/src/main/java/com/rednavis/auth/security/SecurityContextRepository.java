@@ -2,7 +2,6 @@ package com.rednavis.auth.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -25,8 +24,9 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
 
   @Override
   public Mono<SecurityContext> load(ServerWebExchange swe) {
-    ServerHttpRequest request = swe.getRequest();
-    String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+    String authHeader = swe.getRequest()
+        .getHeaders()
+        .getFirst(HttpHeaders.AUTHORIZATION);
 
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
       String authToken = authHeader.substring(7);

@@ -10,9 +10,9 @@ ext {
     lombokVersion = '1.18.12'
     mapstructVersion = '1.3.1.Final'
     springBootVersion = '2.2.4.RELEASE'
-    springDocVersion='1.2.32'
+    springDocVersion = '1.2.32'
     jjwtVersion = '0.11.0'
-    vtPasswordVersion='3.1.2'
+    vtPasswordVersion = '3.1.2'
     jupiterVersion = '5.6.0'
 }
 

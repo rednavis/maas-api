@@ -59,10 +59,13 @@ Temporary Items
 .apdisk
 
 # User-specific stuff
-.idea/*
-!.idea/codeStyles/
+.idea
 *.iml
 *.ipr
+
+# CodeStyle
+# .idea/*
+# !.idea/codeStyles/
 
 # CMake
 cmake-build-*/

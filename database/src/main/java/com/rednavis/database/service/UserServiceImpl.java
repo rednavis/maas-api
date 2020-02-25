@@ -1,5 +1,6 @@
 package com.rednavis.database.service;
 
+import com.rednavis.core.service.CurrentUserService;
 import com.rednavis.database.mapper.UserMapper;
 import com.rednavis.database.repository.UserRepository;
 import com.rednavis.shared.dto.user.User;
@@ -16,6 +17,8 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private CurrentUserService currentUserService;
 
   @Override
   public Mono<User> findByEmail(String email) {
@@ -40,5 +43,15 @@ public class UserServiceImpl implements UserService {
   @Override
   public Mono<Boolean> existsByEmail(String email) {
     return userRepository.existsByEmail(email);
+  }
+
+  @Override
+  public Mono<String> user() {
+    return Mono.just("Content for user");
+  }
+
+  @Override
+  public Mono<String> admin() {
+    return Mono.just("Content for admin");
   }
 }
