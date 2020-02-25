@@ -1,7 +1,8 @@
-version: '3'
+version: '2'
 
 services:
   maas-mongodb:
+    container_name: maas-mongodb
     image: mongo:4.2.3
     restart: always
     ports:
