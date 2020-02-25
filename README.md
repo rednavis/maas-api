@@ -16,18 +16,18 @@ Server side API of the Material Assets management system.
 - Lombok
 - Swagger
 
-##Build project
+## Build project
 `./gradlew clean build`
 
 `./gradlew bootRun`
 
-##Create dependency report
+## Create dependency report
 `./gradlew clean htmlDependencyReport`
 
-##Create docker image
+## Create docker image
 `./gradlew clean bootJar jibDockerBuild`
 
-##Swagger
+## Swagger
 http://localhost:8081/swagger-ui.html
 
 ## API Documentation
