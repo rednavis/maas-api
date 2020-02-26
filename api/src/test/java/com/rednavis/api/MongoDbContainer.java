@@ -7,9 +7,9 @@ public class MongoDbContainer extends GenericContainer<MongoDbContainer> {
 
   /**
    * This is the internal port on which MongoDB is running inside the container.
-   * <p>
-   * You can use this constant in case you want to map an explicit public port to it instead of the default random port. This can be done using
-   * methods like {@link #setPortBindings(java.util.List)}.
+   *
+   * <p>You can use this constant in case you want to map an explicit public port to it instead of the default random port.
+   * This can be done using methods like {@link #setPortBindings(java.util.List)}.
    */
   public static final int MONGODB_PORT = 27017;
   public static final String DEFAULT_IMAGE_AND_TAG = "mongo:4.2.3";
