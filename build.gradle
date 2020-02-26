@@ -14,6 +14,7 @@ ext {
     jjwtVersion = '0.11.0'
     vtPasswordVersion = '3.1.2'
     jupiterVersion = '5.6.0'
+    testcontainersVersion = '1.12.5'
 }
 
 allprojects {
@@ -51,6 +52,8 @@ allprojects {
             //Test
             dependency "org.junit.jupiter:junit-jupiter:${jupiterVersion}"
             dependency "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+            dependency "org.testcontainers:testcontainers:${testcontainersVersion}"
+            dependency "org.testcontainers:junit-jupiter:${testcontainersVersion}"
         }
     }
 }
@@ -68,7 +71,9 @@ subprojects {
 
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation('org.junit.jupiter:junit-jupiter') {
+            exclude group: 'junit', module: 'junit'
+        }
         testImplementation('org.springframework.boot:spring-boot-starter-test') {
             exclude group: 'junit', module: 'junit'
         }

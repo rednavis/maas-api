@@ -8,6 +8,9 @@ dependencies {
 
     implementation 'org.springdoc:springdoc-openapi-webflux-core'
     implementation 'org.springdoc:springdoc-openapi-webflux-ui'
+
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
 }
 
 jib {
