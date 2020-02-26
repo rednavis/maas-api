@@ -15,6 +15,13 @@ Server side API of the Material Assets management system.
 - Lombok
 - Swagger
 
+## Clone project
+`git clone git@github.com:rednavis/maas-api.git`
+
+`cd mass-api`
+
+`git submodule update --init`
+
 ## Build project
 `./gradlew clean build`
 
