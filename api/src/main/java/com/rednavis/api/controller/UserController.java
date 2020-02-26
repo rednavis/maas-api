@@ -1,9 +1,9 @@
 package com.rednavis.api.controller;
 
-import static com.rednavis.shared.RestUrl.USER_URL;
-import static com.rednavis.shared.RestUrl.USER_URL_ADMIN;
-import static com.rednavis.shared.RestUrl.USER_URL_ME;
-import static com.rednavis.shared.RestUrl.USER_URL_USER;
+import static com.rednavis.shared.RestUrlUtils.USER_URL;
+import static com.rednavis.shared.RestUrlUtils.USER_URL_ADMIN;
+import static com.rednavis.shared.RestUrlUtils.USER_URL_ME;
+import static com.rednavis.shared.RestUrlUtils.USER_URL_USER;
 
 import com.rednavis.core.dto.CurrentUser;
 import com.rednavis.core.service.CurrentUserService;

@@ -1,10 +1,10 @@
 package com.rednavis.api.controller;
 
-import static com.rednavis.shared.RestUrl.AUTH_URL;
-import static com.rednavis.shared.RestUrl.AUTH_URL_SIGNIN;
-import static com.rednavis.shared.RestUrl.AUTH_URL_SIGNUP;
-import static com.rednavis.shared.RestUrl.AUTH_URL_TEST_GET;
-import static com.rednavis.shared.RestUrl.AUTH_URL_TEST_POST;
+import static com.rednavis.shared.RestUrlUtils.AUTH_URL;
+import static com.rednavis.shared.RestUrlUtils.AUTH_URL_SIGNIN;
+import static com.rednavis.shared.RestUrlUtils.AUTH_URL_SIGNUP;
+import static com.rednavis.shared.RestUrlUtils.AUTH_URL_TEST_GET;
+import static com.rednavis.shared.RestUrlUtils.AUTH_URL_TEST_POST;
 import static java.time.OffsetDateTime.now;
 
 import com.rednavis.auth.service.auth.AuthService;
