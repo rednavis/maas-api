@@ -1,6 +1,7 @@
 package com.rednavis.api.controller;
 
 import static com.rednavis.shared.RestUrlUtils.AUTH_URL;
+import static com.rednavis.shared.RestUrlUtils.AUTH_URL_CURRENTUSER;
 import static com.rednavis.shared.RestUrlUtils.AUTH_URL_SIGNIN;
 import static com.rednavis.shared.RestUrlUtils.AUTH_URL_SIGNUP;
 import static com.rednavis.shared.RestUrlUtils.AUTH_URL_TEST_GET;
@@ -8,15 +9,20 @@ import static com.rednavis.shared.RestUrlUtils.AUTH_URL_TEST_POST;
 import static java.time.OffsetDateTime.now;
 
 import com.rednavis.auth.service.auth.AuthService;
+import com.rednavis.core.service.CurrentUserService;
 import com.rednavis.shared.dto.auth.SignInRequest;
 import com.rednavis.shared.dto.auth.SignInResponse;
 import com.rednavis.shared.dto.auth.SignUpRequest;
 import com.rednavis.shared.dto.auth.SignUpResponse;
 import com.rednavis.shared.dto.auth.TestRequest;
 import com.rednavis.shared.dto.auth.TestResponse;
+import com.rednavis.shared.security.CurrentUser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +45,28 @@ public class AuthController {
   @PostMapping(AUTH_URL_SIGNUP)
   public Mono<SignUpResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
     return authService.signUp(signUpRequest);
+  }
+
+  @Autowired
+  private CurrentUserService currentUserService;
+
+  /**
+   * getCurrentUser.
+   *
+   * @return
+   */
+  @GetMapping(AUTH_URL_CURRENTUSER)
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+  public Mono<CurrentUser> getCurrentUser() {
+    return currentUserService.getCurrentUser()
+        .map(currentUserDetails -> CurrentUser.builder()
+            .id(currentUserDetails.getId())
+            .email(currentUserDetails.getEmail())
+            .firstName(currentUserDetails.getFirstName())
+            .lastName(currentUserDetails.getLastName())
+            .roles(currentUserDetails.getRoles())
+            .build());
   }
 
   /**

@@ -1,7 +1,7 @@
 package com.rednavis.auth.security;
 
 import com.rednavis.auth.jwt.JwtTokenProvider;
-import com.rednavis.core.dto.CurrentUser;
+import com.rednavis.core.dto.CurrentUserDetails;
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
   }
 
   private Authentication createAuthentication(User user, Authentication authentication) {
-    UserDetails userDetails = CurrentUser.create(user);
+    UserDetails userDetails = CurrentUserDetails.create(user);
     return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
   }
 

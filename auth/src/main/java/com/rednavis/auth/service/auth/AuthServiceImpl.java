@@ -2,7 +2,7 @@ package com.rednavis.auth.service.auth;
 
 import com.rednavis.auth.jwt.JwtTokenProvider;
 import com.rednavis.auth.service.password.PasswordService;
-import com.rednavis.core.dto.CurrentUser;
+import com.rednavis.core.dto.CurrentUserDetails;
 import com.rednavis.core.exception.BadRequestException;
 import com.rednavis.core.exception.ConflictException;
 import com.rednavis.core.exception.NotFoundException;
@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         .filter(user -> passwordService.validatePassword(user.getPassword(), signInRequest.getPassword()))
         .switchIfEmpty(Mono.error(new BadRequestException("Wrong email or password")))
         .map(user -> {
-          UserDetails userDetails = CurrentUser.create(user);
+          UserDetails userDetails = CurrentUserDetails.create(user);
           String token = jwtTokenProvider.generateToken(userDetails);
           return SignInResponse.builder()
               .accessToken(token)

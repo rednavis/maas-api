@@ -2,11 +2,8 @@ package com.rednavis.api.controller;
 
 import static com.rednavis.shared.RestUrlUtils.USER_URL;
 import static com.rednavis.shared.RestUrlUtils.USER_URL_ADMIN;
-import static com.rednavis.shared.RestUrlUtils.USER_URL_ME;
 import static com.rednavis.shared.RestUrlUtils.USER_URL_USER;
 
-import com.rednavis.core.dto.CurrentUser;
-import com.rednavis.core.service.CurrentUserService;
 import com.rednavis.database.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,15 +20,6 @@ public class UserController {
 
   @Autowired
   private UserService userService;
-  @Autowired
-  private CurrentUserService currentUserService;
-
-  @GetMapping(USER_URL_ME)
-  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-  @Operation(security = @SecurityRequirement(name = "bearerAuth"))
-  public Mono<CurrentUser> getCurrentUser() {
-    return currentUserService.getCurrentUser();
-  }
 
   @GetMapping(USER_URL_USER)
   @PreAuthorize("hasRole('USER')")

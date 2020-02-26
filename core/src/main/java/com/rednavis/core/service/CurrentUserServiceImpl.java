@@ -1,6 +1,6 @@
 package com.rednavis.core.service;
 
-import com.rednavis.core.dto.CurrentUser;
+import com.rednavis.core.dto.CurrentUserDetails;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono;
 public class CurrentUserServiceImpl implements CurrentUserService {
 
   @Override
-  public Mono<CurrentUser> getCurrentUser() {
+  public Mono<CurrentUserDetails> getCurrentUser() {
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .filter(Objects::nonNull)
         .map(Authentication::getPrincipal)
-        .cast(CurrentUser.class);
+        .cast(CurrentUserDetails.class);
   }
 }

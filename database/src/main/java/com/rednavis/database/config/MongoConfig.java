@@ -1,6 +1,6 @@
 package com.rednavis.database.config;
 
-import com.rednavis.core.dto.CurrentUser;
+import com.rednavis.core.dto.CurrentUserDetails;
 import com.rednavis.core.service.CurrentUserService;
 import com.rednavis.database.repository.GlobalReactiveMongoRepositoryImpl;
 import com.rednavis.database.repository.Repository;
@@ -27,7 +27,7 @@ public class MongoConfig {
   }
 
   @Bean
-  public AuditorAware<CurrentUser> auditor() {
+  public AuditorAware<CurrentUserDetails> auditor() {
     return () -> currentUserService.getCurrentUser()
         .blockOptional();
   }
