@@ -1,7 +1,6 @@
 package com.rednavis.auth.security;
 
-import com.rednavis.auth.jwt.JwtTokenProvider;
-import com.rednavis.core.dto.CurrentUserDetails;
+import com.rednavis.core.mapper.CurrentUserMapper;
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +12,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Component
-public class AuthenticationManager implements ReactiveAuthenticationManager {
+public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
 
-  @Autowired
-  private JwtTokenProvider jwtTokenProvider;
+  private static final CurrentUserMapper CURRENT_USER_MAPPER = CurrentUserMapper.CURRENT_USER_MAPPER;
+
   @Autowired
   private UserService userService;
 
@@ -32,26 +30,14 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     return Mono.just(authentication)
         .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
         .cast(UsernamePasswordAuthenticationToken.class)
-        .flatMap(this::authenticateToken)
-        .publishOn(Schedulers.parallel())
-        .onErrorResume(e -> raiseBadCredentials())
+        .flatMap(token -> userService.findById(token.getName()))
+        .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
         .map(user -> createAuthentication(user, authentication));
   }
 
   private Authentication createAuthentication(User user, Authentication authentication) {
-    UserDetails userDetails = CurrentUserDetails.create(user);
+    UserDetails userDetails = CURRENT_USER_MAPPER.userToCurrentUserDetails(user);
     return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
-  }
-
-  private Mono<User> authenticateToken(final UsernamePasswordAuthenticationToken authenticationToken) {
-    String authToken = authenticationToken.getCredentials()
-        .toString();
-    log.info("authToken: {}", authToken);
-    if (!jwtTokenProvider.validateToken(authToken)) {
-      return raiseBadCredentials();
-    }
-    String userId = jwtTokenProvider.getUserIdFromJwt(authToken);
-    return userService.findById(userId);
   }
 
   private <T> Mono<T> raiseBadCredentials() {

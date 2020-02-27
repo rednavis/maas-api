@@ -2,11 +2,10 @@ package com.rednavis.auth.config;
 
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
 
-import com.rednavis.auth.security.AuthenticationManager;
-import com.rednavis.auth.security.SecurityContextRepository;
+import com.rednavis.auth.security.JwtReactiveAuthenticationManager;
+import com.rednavis.auth.security.JwtServerSecurityContextRepository;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,11 +38,6 @@ public class SecurityConfig {
       "/**/*.js"
   );
 
-  @Autowired
-  private AuthenticationManager authenticationManager;
-  @Autowired
-  private SecurityContextRepository securityContextRepository;
-
   /**
    * securityWebFilterChain.
    *
@@ -51,25 +45,24 @@ public class SecurityConfig {
    * @return
    */
   @Bean
-  public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+  public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
+      JwtReactiveAuthenticationManager jwtReactiveAuthenticationManager,
+      JwtServerSecurityContextRepository jwtServerSecurityContextRepository) {
     return http
         .headers().frameOptions().disable()
         .and()
         .exceptionHandling()
-        .authenticationEntryPoint((exchange, exception) -> Mono.fromRunnable(() -> {
-          exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        }))
-        .accessDeniedHandler((exchange, exception) -> Mono.fromRunnable(() -> {
-          exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-        }))
+        .authenticationEntryPoint(
+            (exchange, exception) -> Mono.fromRunnable(() -> exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
+        .accessDeniedHandler((exchange, exception) -> Mono.fromRunnable(() -> exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN)))
         .and()
         .cors().disable()
         .csrf().disable()
         .formLogin().disable()
         .httpBasic().disable()
         .logout().disable()
-        .authenticationManager(authenticationManager)
-        .securityContextRepository(securityContextRepository)
+        .authenticationManager(jwtReactiveAuthenticationManager)
+        .securityContextRepository(jwtServerSecurityContextRepository)
         .authorizeExchange()
         .pathMatchers(HttpMethod.OPTIONS).permitAll()
         .pathMatchers(AUTH_URL_PATTERN).permitAll()

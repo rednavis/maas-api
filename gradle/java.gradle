@@ -26,8 +26,16 @@ configurations {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        excludeTags 'IntegrationTest'
+    }
     testLogging {
         events 'passed', 'skipped', 'failed'
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform() {
+        includeTags 'IntegrationTest'
     }
 }

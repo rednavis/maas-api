@@ -7,8 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import reactor.core.publisher.Flux;
 
 @NoRepositoryBean
-@SuppressWarnings("InterfaceTypeParameterName")
-public interface GlobalReactiveMongoRepository<T, ID extends Serializable> extends ReactiveMongoRepository<T, ID> {
+public interface GlobalReactiveMongoRepository<T, I extends Serializable> extends ReactiveMongoRepository<T, I> {
 
   Flux<T> findAll(Pageable pageable);
 }

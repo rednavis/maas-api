@@ -28,7 +28,7 @@ public class UserController {
   @Operation(security = @SecurityRequirement(name = BEARER_AUTH))
   public Mono<ApiResponse<String>> user() {
     return userService.user()
-        .map(s -> ApiResponse.createSuccessResponse(s));
+        .map(ApiResponse::createSuccessResponse);
   }
 
   @GetMapping(USER_URL_ADMIN)
@@ -36,6 +36,6 @@ public class UserController {
   @Operation(security = @SecurityRequirement(name = BEARER_AUTH))
   public Mono<ApiResponse<String>> admin() {
     return userService.admin()
-        .map(s -> ApiResponse.createSuccessResponse(s));
+        .map(ApiResponse::createSuccessResponse);
   }
 }

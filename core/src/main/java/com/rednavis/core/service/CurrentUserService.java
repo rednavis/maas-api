@@ -1,9 +1,9 @@
 package com.rednavis.core.service;
 
-import com.rednavis.core.dto.CurrentUserDetails;
+import com.rednavis.shared.security.CurrentUser;
 import reactor.core.publisher.Mono;
 
 public interface CurrentUserService {
 
-  Mono<CurrentUserDetails> getCurrentUser();
+  Mono<CurrentUser> getCurrentUser();
 }

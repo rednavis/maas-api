@@ -6,8 +6,9 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -15,14 +16,21 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
-@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-class MaasApiApplicationTest {
+@Testcontainers
+@Tag("IntegrationTest")
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {MaasApiApplication.class})
+public abstract class MaasApiApplicationTest {
 
   @Container
   private MongoDbContainer mongoDbContainer = new MongoDbContainer();
 
+  /**
+   * mongoClient.
+   *
+   * @return
+   */
   @Bean
   public MongoClient mongoClient() {
     MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
@@ -33,12 +41,14 @@ class MaasApiApplicationTest {
     return MongoClients.create(mongoClientSettings);
   }
 
+  /**
+   * mongoTemplate.
+   *
+   * @param mongoClient mongoClient
+   * @return
+   */
   @Bean
   public MongoTemplate mongoTemplate(MongoClient mongoClient) {
     return new MongoTemplate(mongoClient, "test");
-  }
-
-  @Test
-  public void contextLoads() {
   }
 }

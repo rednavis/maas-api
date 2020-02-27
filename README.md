@@ -23,17 +23,25 @@ Server side API of the Material Assets management system.
 `git submodule update --init`
 
 ## Build project
+
 `./gradlew clean build`
 
 `./gradlew bootRun`
 
 ## Create dependency report
+
 `./gradlew clean htmlDependencyReport`
 
+## Update dependency
+
+`./gradlew dependencyUpdates`
+
 ## Create docker image
+
 `./gradlew clean bootJar jibDockerBuild`
 
 ## Swagger
+
 http://localhost:8081/swagger-ui.html
 
 ## API Documentation

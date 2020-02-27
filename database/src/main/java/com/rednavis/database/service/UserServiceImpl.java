@@ -23,21 +23,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public Mono<User> findByEmail(String email) {
     return userRepository.findByEmail(email)
-        .map(userEntity -> USER_MAPPER.entityToDto(userEntity));
+        .map(USER_MAPPER::entityToDto);
   }
 
   @Override
   public Mono<User> findById(String id) {
     return userRepository.findById(id)
-        .map(userEntity -> USER_MAPPER.entityToDto(userEntity));
+        .map(USER_MAPPER::entityToDto);
   }
 
   @Override
   public Mono<User> save(User user) {
     return Mono.just(user)
-        .map(userMono -> USER_MAPPER.dtoToEntity(user))
+        .map(USER_MAPPER::dtoToEntity)
         .flatMap(userEntity -> userRepository.save(userEntity))
-        .map(userEntity -> USER_MAPPER.entityToDto(userEntity));
+        .map(USER_MAPPER::entityToDto);
   }
 
   @Override

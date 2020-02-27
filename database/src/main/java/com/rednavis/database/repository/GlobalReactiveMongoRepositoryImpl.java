@@ -9,10 +9,10 @@ import org.springframework.data.mongodb.repository.support.SimpleReactiveMongoRe
 import reactor.core.publisher.Flux;
 
 @SuppressWarnings("ClassTypeParameterName")
-public class GlobalReactiveMongoRepositoryImpl<T, ID extends Serializable> extends SimpleReactiveMongoRepository<T, ID> implements
-    GlobalReactiveMongoRepository<T, ID> {
+public class GlobalReactiveMongoRepositoryImpl<T, I extends Serializable> extends SimpleReactiveMongoRepository<T, I> implements
+    GlobalReactiveMongoRepository<T, I> {
 
-  private MongoEntityInformation<T, ID> entityInformation;
+  private MongoEntityInformation<T, I> entityInformation;
   private ReactiveMongoOperations mongoOperations;
 
   /**
@@ -21,7 +21,7 @@ public class GlobalReactiveMongoRepositoryImpl<T, ID extends Serializable> exten
    * @param entityInformation entityInformation
    * @param mongoOperations   mongoOperations
    */
-  public GlobalReactiveMongoRepositoryImpl(MongoEntityInformation<T, ID> entityInformation, ReactiveMongoOperations mongoOperations) {
+  public GlobalReactiveMongoRepositoryImpl(MongoEntityInformation<T, I> entityInformation, ReactiveMongoOperations mongoOperations) {
     super(entityInformation, mongoOperations);
     this.entityInformation = entityInformation;
     this.mongoOperations = mongoOperations;

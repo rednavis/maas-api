@@ -1,42 +1,19 @@
 package com.rednavis.core.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rednavis.shared.dto.user.RoleEnum;
-import com.rednavis.shared.dto.user.User;
 import com.rednavis.shared.security.CurrentUser;
 import java.util.Collection;
-import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
+@EqualsAndHashCode(callSuper = true)
 public class CurrentUserDetails extends CurrentUser implements UserDetails {
 
-  @JsonIgnore
   private String password;
-
-  public CurrentUserDetails(String id, String password, Set<RoleEnum> roles, String firstName, String lastName, String email) {
-    super(id, roles, firstName, lastName, email);
-  }
-
-  /**
-   * create.
-   *
-   * @param user user
-   * @return
-   */
-  public static CurrentUserDetails create(User user) {
-    return new CurrentUserDetails(
-        user.getId(),
-        user.getPassword(),
-        user.getRoles(),
-        user.getFirstName(),
-        user.getLastName(),
-        user.getEmail());
-  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

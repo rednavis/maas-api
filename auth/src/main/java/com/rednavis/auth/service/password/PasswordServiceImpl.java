@@ -31,8 +31,8 @@ public class PasswordServiceImpl implements PasswordService {
   public String generatePassword(String password) {
     try {
       return PasswordUtils.createHash(password);
-    } catch (CannotPerformOperationException ex) {
-      log.error("Can't generate password [password: {}]", password, ex);
+    } catch (CannotPerformOperationException e) {
+      log.error("Can't generate password [password: {}]", password, e);
       throw new RuntimeException("Can't validate [password: " + password + "]");
     }
   }
@@ -41,8 +41,8 @@ public class PasswordServiceImpl implements PasswordService {
   public boolean validatePassword(String passwordDb, String password) {
     try {
       return PasswordUtils.verifyPassword(password, passwordDb);
-    } catch (CannotPerformOperationException | InvalidHashException ex) {
-      log.error("Can't validate password [password: {}]", password, ex);
+    } catch (CannotPerformOperationException | InvalidHashException e) {
+      log.error("Can't validate password [password: {}]", password, e);
       throw new RuntimeException("Can't validate [password: " + password + "]");
     }
   }

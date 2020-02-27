@@ -1,20 +1,26 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'org.springframework.boot' version '2.2.4.RELEASE' apply false
-    id 'com.google.cloud.tools.jib' version '2.0.0' apply false
+    id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'org.springframework.boot' version '2.2.5.RELEASE' apply false
+    id 'com.google.cloud.tools.jib' version '2.1.0' apply false
 }
 
 ext {
     maasApiVersion = '0.0.1-SNAPSHOT'
     lombokVersion = '1.18.12'
     mapstructVersion = '1.3.1.Final'
-    springBootVersion = '2.2.4.RELEASE'
+    springBootVersion = '2.2.5.RELEASE'
     springDocVersion = '1.2.32'
-    jjwtVersion = '0.11.0'
+    nimbusJoseJwtVersion = '8.8'
     vtPasswordVersion = '3.1.2'
     jupiterVersion = '5.6.0'
     testcontainersVersion = '1.12.5'
+    reactorTestVersion = '3.3.3.RELEASE'
+}
+
+configurations.all {
+    exclude group: 'junit', module: 'junit'
 }
 
 allprojects {
@@ -44,9 +50,7 @@ allprojects {
             dependency "org.springdoc:springdoc-openapi-webflux-core:${springDocVersion}"
             dependency "org.springdoc:springdoc-openapi-webflux-ui:${springDocVersion}"
 
-            dependency "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
-            dependency "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
-
+            dependency "com.nimbusds:nimbus-jose-jwt:${nimbusJoseJwtVersion}"
             dependency "edu.vt.middleware:vt-password:${vtPasswordVersion}"
 
             //Test
@@ -54,6 +58,7 @@ allprojects {
             dependency "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
             dependency "org.testcontainers:testcontainers:${testcontainersVersion}"
             dependency "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+            dependency "io.projectreactor:reactor-test:${reactorTestVersion}"
         }
     }
 }
@@ -71,12 +76,8 @@ subprojects {
 
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-        testImplementation('org.junit.jupiter:junit-jupiter') {
-            exclude group: 'junit', module: 'junit'
-        }
-        testImplementation('org.springframework.boot:spring-boot-starter-test') {
-            exclude group: 'junit', module: 'junit'
-        }
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
 
     jacocoTestReport {
@@ -108,5 +109,5 @@ codeCoverageReport.dependsOn {
 }
 
 wrapper {
-    gradleVersion = "6.2"
+    gradleVersion = "6.2.1"
 }

@@ -2,8 +2,6 @@ dependencies {
     implementation project(':core')
     implementation project(':database')
 
-    implementation 'io.jsonwebtoken:jjwt-impl'
-    implementation 'io.jsonwebtoken:jjwt-jackson'
-
+    implementation 'com.nimbusds:nimbus-jose-jwt'
     implementation 'edu.vt.middleware:vt-password'
 }

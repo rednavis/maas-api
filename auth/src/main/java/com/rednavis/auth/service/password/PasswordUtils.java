@@ -70,8 +70,8 @@ class PasswordUtils {
     int storedHashSize;
     try {
       storedHashSize = Integer.parseInt(params[HASH_SIZE_INDEX]);
-    } catch (NumberFormatException ex) {
-      throw new InvalidHashException("Could not parse the hash size as an integer.", ex);
+    } catch (NumberFormatException e) {
+      throw new InvalidHashException("Could not parse the hash size as an integer.", e);
     }
 
     if (storedHashSize != hash.length) {
@@ -83,8 +83,8 @@ class PasswordUtils {
     byte[] hash;
     try {
       hash = fromBase64(params[PBKDF2_INDEX]);
-    } catch (IllegalArgumentException ex) {
-      throw new InvalidHashException("Base64 decoding of pbkdf2 output failed.", ex);
+    } catch (IllegalArgumentException e) {
+      throw new InvalidHashException("Base64 decoding of pbkdf2 output failed.", e);
     }
     return hash;
   }
@@ -93,8 +93,8 @@ class PasswordUtils {
     byte[] salt;
     try {
       salt = fromBase64(params[SALT_INDEX]);
-    } catch (IllegalArgumentException ex) {
-      throw new InvalidHashException("Base64 decoding of salt failed.", ex);
+    } catch (IllegalArgumentException e) {
+      throw new InvalidHashException("Base64 decoding of salt failed.", e);
     }
     return salt;
   }
@@ -103,8 +103,8 @@ class PasswordUtils {
     int iterations;
     try {
       iterations = Integer.parseInt(params[ITERATION_INDEX]);
-    } catch (NumberFormatException ex) {
-      throw new InvalidHashException("Could not parse the iteration count as an integer.", ex);
+    } catch (NumberFormatException e) {
+      throw new InvalidHashException("Could not parse the iteration count as an integer.", e);
     }
 
     if (iterations < 1) {
@@ -137,10 +137,10 @@ class PasswordUtils {
       PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, bytes * 8);
       SecretKeyFactory skf = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM);
       return skf.generateSecret(spec).getEncoded();
-    } catch (NoSuchAlgorithmException ex) {
-      throw new CannotPerformOperationException("Hash algorithm not supported.", ex);
-    } catch (InvalidKeySpecException ex) {
-      throw new CannotPerformOperationException("Invalid key spec.", ex);
+    } catch (NoSuchAlgorithmException e) {
+      throw new CannotPerformOperationException("Hash algorithm not supported.", e);
+    } catch (InvalidKeySpecException e) {
+      throw new CannotPerformOperationException("Invalid key spec.", e);
     }
   }
 

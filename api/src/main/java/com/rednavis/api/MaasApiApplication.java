@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Import;
     DatabaseModule.class})
 public class MaasApiApplication implements InitializingBean {
 
-  private static final String ADMIN_EMAIL = "admin@admin.com";
-  private static final String ADMIN_PASSWORD = "1@QWaszx";
+  public static final String ADMIN_EMAIL = "admin@admin.com";
+  public static final String ADMIN_PASSWORD = "1@QWaszx";
 
   @Autowired
   private PasswordService passwordService;
