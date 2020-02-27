@@ -10,12 +10,12 @@ import static java.time.OffsetDateTime.now;
 
 import com.rednavis.auth.service.auth.AuthService;
 import com.rednavis.core.service.CurrentUserService;
-import com.rednavis.shared.dto.auth.SignInRequest;
-import com.rednavis.shared.dto.auth.SignInResponse;
-import com.rednavis.shared.dto.auth.SignUpRequest;
-import com.rednavis.shared.dto.auth.SignUpResponse;
-import com.rednavis.shared.dto.auth.TestRequest;
-import com.rednavis.shared.dto.auth.TestResponse;
+import com.rednavis.shared.rest.request.SignInRequest;
+import com.rednavis.shared.rest.request.SignUpRequest;
+import com.rednavis.shared.rest.request.TestRequest;
+import com.rednavis.shared.rest.response.SignInResponse;
+import com.rednavis.shared.rest.response.SignUpResponse;
+import com.rednavis.shared.rest.response.TestResponse;
 import com.rednavis.shared.security.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

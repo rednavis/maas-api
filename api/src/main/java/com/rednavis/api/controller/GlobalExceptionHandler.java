@@ -1,10 +1,10 @@
 package com.rednavis.api.controller;
 
-import com.rednavis.api.dto.ErrorResponse;
 import com.rednavis.core.exception.BadRequestException;
 import com.rednavis.core.exception.ConflictException;
 import com.rednavis.core.exception.MaasAppException;
 import com.rednavis.core.exception.NotFoundException;
+import com.rednavis.shared.rest.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -40,7 +40,7 @@ public class JwtTokenProvider {
     Key signingKey = new SecretKeySpec(jwtSecret, signatureAlgorithm.getJcaName());
     return Jwts.builder()
         .setSubject(userDetails.getUsername())
-        .setIssuedAt(new Date())
+        .setIssuedAt(now)
         .setExpiration(expiryDate)
         .signWith(signingKey, signatureAlgorithm)
         .compact();
