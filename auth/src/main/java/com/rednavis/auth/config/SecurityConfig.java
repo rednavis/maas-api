@@ -1,6 +1,6 @@
 package com.rednavis.auth.config;
 
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_PATTERN;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
 
 import com.rednavis.auth.security.AuthenticationManager;
 import com.rednavis.auth.security.SecurityContextRepository;

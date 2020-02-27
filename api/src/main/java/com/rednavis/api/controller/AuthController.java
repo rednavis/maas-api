@@ -1,15 +1,17 @@
 package com.rednavis.api.controller;
 
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL;
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_CURRENTUSER;
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_SIGNIN;
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_SIGNUP;
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_TEST_GET;
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_TEST_POST;
+import static com.rednavis.api.config.SwaggerConfig.BEARER_AUTH;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_CURRENTUSER;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_SIGNIN;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_SIGNUP;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_TEST_GET;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_TEST_POST;
 import static java.time.OffsetDateTime.now;
 
 import com.rednavis.auth.service.auth.AuthService;
 import com.rednavis.core.service.CurrentUserService;
+import com.rednavis.shared.rest.ApiResponse;
 import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.request.SignUpRequest;
 import com.rednavis.shared.rest.request.TestRequest;
@@ -38,12 +40,12 @@ public class AuthController {
   private AuthService authService;
 
   @PostMapping(AUTH_URL_SIGNIN)
-  public Mono<SignInResponse> signIn(@RequestBody SignInRequest signInRequest) {
+  public Mono<ApiResponse<SignInResponse>> signIn(@RequestBody SignInRequest signInRequest) {
     return authService.signIn(signInRequest);
   }
 
   @PostMapping(AUTH_URL_SIGNUP)
-  public Mono<SignUpResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
+  public Mono<ApiResponse<SignUpResponse>> signUp(@RequestBody SignUpRequest signUpRequest) {
     return authService.signUp(signUpRequest);
   }
 
@@ -57,16 +59,19 @@ public class AuthController {
    */
   @GetMapping(AUTH_URL_CURRENTUSER)
   @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-  @Operation(security = @SecurityRequirement(name = "bearerAuth"))
-  public Mono<CurrentUser> getCurrentUser() {
+  @Operation(security = @SecurityRequirement(name = BEARER_AUTH))
+  public Mono<ApiResponse<CurrentUser>> getCurrentUser() {
     return currentUserService.getCurrentUser()
-        .map(currentUserDetails -> CurrentUser.builder()
-            .id(currentUserDetails.getId())
-            .email(currentUserDetails.getEmail())
-            .firstName(currentUserDetails.getFirstName())
-            .lastName(currentUserDetails.getLastName())
-            .roles(currentUserDetails.getRoles())
-            .build());
+        .map(currentUserDetails -> {
+          CurrentUser currentUser = CurrentUser.builder()
+              .id(currentUserDetails.getId())
+              .email(currentUserDetails.getEmail())
+              .firstName(currentUserDetails.getFirstName())
+              .lastName(currentUserDetails.getLastName())
+              .roles(currentUserDetails.getRoles())
+              .build();
+          return ApiResponse.createSuccessResponse(currentUser);
+        });
   }
 
   /**
@@ -76,13 +81,14 @@ public class AuthController {
    * @return
    */
   @PostMapping(AUTH_URL_TEST_POST)
-  public Mono<TestResponse> testPost(@RequestBody TestRequest testRequest) {
+  public Mono<ApiResponse<TestResponse>> testPost(@RequestBody TestRequest testRequest) {
     TestResponse testResponse = TestResponse.builder()
         .valueOutput(testRequest.getValueInput() + " " + DateTimeFormatter.ISO_DATE_TIME
             .withZone(ZoneOffset.UTC)
             .format(now().toInstant()))
         .build();
-    return Mono.just(testResponse);
+    ApiResponse<TestResponse> apiResponse = ApiResponse.createSuccessResponse(testResponse);
+    return Mono.just(apiResponse);
   }
 
   /**
@@ -91,12 +97,13 @@ public class AuthController {
    * @return
    */
   @GetMapping(AUTH_URL_TEST_GET)
-  public Mono<TestResponse> testGet() {
+  public Mono<ApiResponse<TestResponse>> testGet() {
     TestResponse testResponse = TestResponse.builder()
         .valueOutput(DateTimeFormatter.ISO_DATE_TIME
             .withZone(ZoneOffset.UTC)
             .format(now().toInstant()))
         .build();
-    return Mono.just(testResponse);
+    ApiResponse<TestResponse> apiResponse = ApiResponse.createSuccessResponse(testResponse);
+    return Mono.just(apiResponse);
   }
 }

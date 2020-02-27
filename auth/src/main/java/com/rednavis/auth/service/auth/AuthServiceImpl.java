@@ -1,6 +1,5 @@
 package com.rednavis.auth.service.auth;
 
-import com.rednavis.auth.jwt.JwtTokenProvider;
 import com.rednavis.auth.service.password.PasswordService;
 import com.rednavis.core.dto.CurrentUserDetails;
 import com.rednavis.core.exception.BadRequestException;
@@ -9,6 +8,7 @@ import com.rednavis.core.exception.NotFoundException;
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.dto.user.User;
+import com.rednavis.shared.rest.ApiResponse;
 import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.request.SignUpRequest;
 import com.rednavis.shared.rest.response.SignInResponse;
@@ -24,8 +24,8 @@ public class AuthServiceImpl implements AuthService {
 
   @Autowired
   private PasswordService passwordService;
-  @Autowired
-  private JwtTokenProvider jwtTokenProvider;
+  //@Autowired
+  //private JwtTokenProvider jwtTokenProvider;
   @Autowired
   private UserService userService;
 
@@ -36,16 +36,17 @@ public class AuthServiceImpl implements AuthService {
    * @return
    */
   @Override
-  public Mono<SignInResponse> signIn(SignInRequest signInRequest) {
+  public Mono<ApiResponse<SignInResponse>> signIn(SignInRequest signInRequest) {
     return userService.findByEmail(signInRequest.getEmail())
         .filter(user -> passwordService.validatePassword(user.getPassword(), signInRequest.getPassword()))
         .switchIfEmpty(Mono.error(new BadRequestException("Wrong email or password")))
         .map(user -> {
           UserDetails userDetails = CurrentUserDetails.create(user);
-          String token = jwtTokenProvider.generateToken(userDetails);
-          return SignInResponse.builder()
+          String token = "";//jwtTokenProvider.generateToken(userDetails);
+          SignInResponse signInResponse = SignInResponse.builder()
               .accessToken(token)
               .build();
+          return ApiResponse.createSuccessResponse(signInResponse);
         })
         .switchIfEmpty(Mono.error(new NotFoundException("User not found [email: " + signInRequest.getEmail() + "]")));
   }
@@ -57,14 +58,17 @@ public class AuthServiceImpl implements AuthService {
    * @return
    */
   @Override
-  public Mono<SignUpResponse> signUp(SignUpRequest signUpRequest) {
+  public Mono<ApiResponse<SignUpResponse>> signUp(SignUpRequest signUpRequest) {
     return userService.existsByEmail(signUpRequest.getEmail())
         .filter(exist -> exist == false)
         .switchIfEmpty(Mono.error(new ConflictException("Email [email: " + signUpRequest.getEmail() + "] is already taken")))
         .then(userService.save(createNewUser(signUpRequest)))
-        .map(user -> SignUpResponse.builder()
-            .id(user.getId())
-            .build());
+        .map(user -> {
+          SignUpResponse signUpResponse = SignUpResponse.builder()
+              .id(user.getId())
+              .build();
+          return ApiResponse.createSuccessResponse(signUpResponse);
+        });
   }
 
   private User createNewUser(SignUpRequest signUpRequest) {

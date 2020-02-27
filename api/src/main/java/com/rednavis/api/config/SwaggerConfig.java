@@ -1,8 +1,10 @@
 package com.rednavis.api.config;
 
-import static com.rednavis.shared.RestUrlUtils.AUTH_URL_PATTERN;
-import static com.rednavis.shared.RestUrlUtils.USER_URL_PATTERN;
+import static com.rednavis.api.config.SwaggerConfig.BEARER_AUTH;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
+import static com.rednavis.shared.util.RestUrlUtils.USER_URL_PATTERN;
 
+import com.rednavis.api.controller.AuthController;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -16,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SecurityScheme(
-    name = "bearerAuth",
+    name = BEARER_AUTH,
     type = SecuritySchemeType.HTTP,
     bearerFormat = "JWT",
     scheme = "bearer"
@@ -34,7 +36,11 @@ import org.springframework.context.annotation.Configuration;
 @SuppressWarnings("AbbreviationAsWordInName")
 public class SwaggerConfig {
 
-  private static final String[] PACKAGED_TO_MATCH = {"com.rednavis.api.controller"};
+  public static final String BEARER_AUTH = "bearerAuth";
+
+  private static final String[] PACKAGED_TO_MATCH = {AuthController.class
+      .getPackage()
+      .getName()};
 
   /**
    * authOpenApi.
