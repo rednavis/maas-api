@@ -24,8 +24,12 @@ springdoc:
 
 # JWT Properties
 jwt:
-  secretKey: vgYU2EZhLbaOqAgcwcnRlHqw4gJsM8Hu
-  expirationInSec: 3600000
+  accessToken:
+    secretKey: vgYU2EZhLbaOqAgcwcnRlHqw4gJsM8Hu
+    expirationInSec: 600 #10 min
+  refreshToken:
+    secretKey: r4peNnpQDp7lu1d7zjrvLF4wdMtSVYgk
+    expirationInSec: 3600 #60 min
 
 # Password validation
 password:

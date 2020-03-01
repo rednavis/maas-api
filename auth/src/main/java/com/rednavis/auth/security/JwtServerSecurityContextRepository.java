@@ -2,6 +2,7 @@ package com.rednavis.auth.security;
 
 import static com.rednavis.shared.util.StringUtils.BEARER_SPACE;
 
+import com.rednavis.auth.jwt.JwtTokenEnum;
 import com.rednavis.auth.jwt.JwtTokenService;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -38,8 +39,10 @@ public class JwtServerSecurityContextRepository implements ServerSecurityContext
         .filter(matchBearerLength)
         .map(isolateBearerValue)
         .filter(token -> !token.isEmpty())
-        .map(token -> jwtTokenService.checkToken(token))
+        .map(token -> jwtTokenService.checkToken(JwtTokenEnum.JWT_ACCESS_TOKEN, token))
+        .filter(Objects::nonNull)
         .map(signedJWTMono -> jwtTokenService.createAuthentication(signedJWTMono))
+        .filter(Objects::nonNull)
         .flatMap(authentication -> jwtReactiveAuthenticationManager.authenticate(authentication))
         .map(SecurityContextImpl::new);
   }

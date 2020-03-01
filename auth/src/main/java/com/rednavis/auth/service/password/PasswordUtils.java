@@ -41,7 +41,7 @@ class PasswordUtils {
     int hashSize = hash.length;
 
     // format: algorithm:iterations:hashSize:salt:hash
-    return "sha1:" + PBKDF2_ITERATIONS + ":" + hashSize + ":" + toBase64(salt) + ":" + toBase64(hash);
+    return "SHA512:" + PBKDF2_ITERATIONS + ":" + hashSize + ":" + toBase64(salt) + ":" + toBase64(hash);
   }
 
   public static boolean verifyPassword(String password, String correctHash) throws CannotPerformOperationException, InvalidHashException {
@@ -118,8 +118,8 @@ class PasswordUtils {
       throw new InvalidHashException("Fields are missing from the password hash.");
     }
 
-    // Currently, Java only supports SHA1.
-    if (!params[HASH_ALGORITHM_INDEX].equals("sha1")) {
+    // Currently, Java only supports SHA512.
+    if (!params[HASH_ALGORITHM_INDEX].equals("SHA512")) {
       throw new CannotPerformOperationException("Unsupported hash type.");
     }
   }

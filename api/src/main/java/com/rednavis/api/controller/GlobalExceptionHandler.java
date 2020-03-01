@@ -2,6 +2,7 @@ package com.rednavis.api.controller;
 
 import com.rednavis.core.exception.BadRequestException;
 import com.rednavis.core.exception.ConflictException;
+import com.rednavis.core.exception.JwtException;
 import com.rednavis.core.exception.MaasApiException;
 import com.rednavis.core.exception.NotFoundException;
 import com.rednavis.shared.http.HttpStatusCode;
@@ -71,5 +72,19 @@ public class GlobalExceptionHandler {
     log.error(maasApiException.getMessage());
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), maasApiException.getMessage());
     return ApiResponse.createErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, errorResponse);
+  }
+
+  /**
+   * jwtHandler.
+   *
+   * @param jwtException jwtException
+   * @return
+   */
+  @ExceptionHandler({JwtException.class})
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ApiResponse jwtHandler(JwtException jwtException) {
+    log.error(jwtException.getMessage());
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), jwtException.getMessage());
+    return ApiResponse.createErrorResponse(HttpStatusCode.UNAUTHORIZED, errorResponse);
   }
 }

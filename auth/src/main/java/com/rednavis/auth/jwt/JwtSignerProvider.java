@@ -3,15 +3,17 @@ package com.rednavis.auth.jwt;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.MACSigner;
-import lombok.Getter;
+import com.rednavis.core.exception.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 class JwtSignerProvider {
 
-  @Getter
-  private JWSSigner signer;
+  private final JWSSigner signerAccessToken;
+  private final JWSSigner signerRefreshToken;
 
   /**
    * JwtSignerProvider.
@@ -20,12 +22,28 @@ class JwtSignerProvider {
    */
   @Autowired
   public JwtSignerProvider(JwtConfiguration jwtConfiguration) {
-    JWSSigner init;
+    JWSSigner initAccessToken;
+    JWSSigner initRefreshToken;
     try {
-      init = new MACSigner(jwtConfiguration.getJwtSecret());
+      initAccessToken = new MACSigner(jwtConfiguration.getJwtAccessTokenSecret());
+      initRefreshToken = new MACSigner(jwtConfiguration.getJwtRefreshTokenSecret());
     } catch (KeyLengthException e) {
-      init = null;
+      log.error("Error parse key secret length", e);
+      initAccessToken = null;
+      initRefreshToken = null;
     }
-    this.signer = init;
+    signerAccessToken = initAccessToken;
+    signerRefreshToken = initRefreshToken;
+  }
+
+  public JWSSigner getJwsSigner(JwtTokenEnum jwtTokenEnum) {
+    switch (jwtTokenEnum) {
+      case JWT_ACCESS_TOKEN:
+        return signerAccessToken;
+      case JWT_REFRESH_TOKEN:
+        return signerRefreshToken;
+      default:
+        throw new JwtException("Unknown token type [jwtTokenEnum: " + jwtTokenEnum.name() + "]");
+    }
   }
 }

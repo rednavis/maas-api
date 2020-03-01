@@ -8,9 +8,12 @@ import org.springframework.stereotype.Component;
 @Getter
 class JwtConfiguration {
 
-  @Value("${jwt.secretKey}")
-  private String jwtSecret;
-
-  @Value("${jwt.expirationInSec}")
-  private int expirationInSec;
+  @Value("${jwt.accessToken.secretKey}")
+  private String jwtAccessTokenSecret;
+  @Value("${jwt.accessToken.expirationInSec}")
+  private int jwtAccessTokenExpirationInSec;
+  @Value("${jwt.refreshToken.secretKey}")
+  private String jwtRefreshTokenSecret;
+  @Value("${jwt.refreshToken.expirationInSec}")
+  private int jwtRefreshTokenExpirationInSec;
 }

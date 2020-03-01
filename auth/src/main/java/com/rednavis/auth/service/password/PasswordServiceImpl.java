@@ -34,7 +34,7 @@ public class PasswordServiceImpl implements PasswordService {
       return PasswordUtils.createHash(password);
     } catch (CannotPerformOperationException e) {
       log.error("Can't generate password [password: {}]", password, e);
-      throw new MaasApiException("Can't validate [password: " + password + "]");
+      throw new MaasApiException("Can't generate password [password: " + password + "]");
     }
   }
 

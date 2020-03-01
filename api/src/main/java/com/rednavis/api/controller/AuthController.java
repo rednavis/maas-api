@@ -3,12 +3,14 @@ package com.rednavis.api.controller;
 import static com.rednavis.api.config.SwaggerConfig.BEARER_AUTH;
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL;
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_CURRENTUSER;
+import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_REFRESH_TOKEN;
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_SIGNIN;
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_SIGNUP;
 
 import com.rednavis.auth.service.auth.AuthService;
 import com.rednavis.core.service.CurrentUserService;
 import com.rednavis.shared.rest.ApiResponse;
+import com.rednavis.shared.rest.request.RefreshTokenRequest;
 import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.request.SignUpRequest;
 import com.rednavis.shared.rest.response.SignInResponse;
@@ -46,6 +48,11 @@ public class AuthController {
         .map(ApiResponse::createSuccessResponse);
   }
 
+  @PostMapping(AUTH_URL_REFRESH_TOKEN)
+  public Mono<ApiResponse<SignInResponse>> signUp(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    return authService.refreshToken(refreshTokenRequest)
+        .map(ApiResponse::createSuccessResponse);
+  }
 
   /**
    * getCurrentUser.

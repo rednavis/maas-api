@@ -1,5 +1,7 @@
 package com.rednavis.auth.jwt;
 
+import static java.time.Instant.now;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -7,15 +9,16 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.rednavis.core.exception.JwtException;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.security.CurrentUser;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -24,11 +27,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
-@Slf4j
 @Configuration
 public class JwtTokenService {
+
+  private static final JWSAlgorithm JWS_ALGORITHM = JWSAlgorithm.HS256;
 
   @Autowired
   private JwtConfiguration jwtConfiguration;
@@ -41,11 +44,30 @@ public class JwtTokenService {
    * @param currentUser currentUser
    * @return String representing a valid token
    */
-  public String generateToken(CurrentUser currentUser) {
+  public JwtTokenInfo generateToken(JwtTokenEnum jwtTokenEnum, CurrentUser currentUser, long currentTime) {
+    JwtTokenInfo jwtTokenInfo = new JwtTokenInfo();
+
+    switch (jwtTokenEnum) {
+      case JWT_ACCESS_TOKEN:
+        jwtTokenInfo.setExpirationTime(currentTime + jwtConfiguration.getJwtAccessTokenExpirationInSec() * 1000);
+        jwtTokenInfo.setToken(generateAccessToken(currentUser, jwtTokenInfo.getExpirationTime()));
+        break;
+      case JWT_REFRESH_TOKEN:
+        jwtTokenInfo.setExpirationTime(currentTime + jwtConfiguration.getJwtRefreshTokenExpirationInSec() * 1000);
+        jwtTokenInfo.setToken(generateRefreshToken(currentUser, jwtTokenInfo.getExpirationTime()));
+        break;
+      default:
+        break;
+    }
+
+    return jwtTokenInfo;
+  }
+
+  private String generateAccessToken(CurrentUser currentUser, long expirationTime) {
     //Prepare JWT with claims set
     JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
         .subject(currentUser.getEmail())
-        .expirationTime(new Date(new Date().getTime() + jwtConfiguration.getExpirationInSec() * 1000))
+        .expirationTime(new Date(expirationTime))
         .claim(CurrentUser.Fields.id, currentUser.getId())
         .claim(CurrentUser.Fields.firstName, currentUser.getFirstName())
         .claim(CurrentUser.Fields.lastName, currentUser.getLastName())
@@ -54,13 +76,28 @@ public class JwtTokenService {
             .map(Enum::name)
             .collect(Collectors.joining(",")))
         .build();
-    SignedJWT signedJwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+    SignedJWT signedJwt = new SignedJWT(new JWSHeader(JWS_ALGORITHM), claimsSet);
     //Apply the HMAC protection
     try {
-      signedJwt.sign(jwtSignerProvider.getSigner());
+      signedJwt.sign(jwtSignerProvider.getJwsSigner(JwtTokenEnum.JWT_ACCESS_TOKEN));
     } catch (JOSEException e) {
-      log.error("Error sign currentUser [currentUser: {}]", currentUser, e);
-      return null;
+      throw new JwtException("Can't sign currentUser [currentUser: " + currentUser + "]");
+    }
+    return signedJwt.serialize();
+  }
+
+  private String generateRefreshToken(CurrentUser currentUser, long expirationTime) {
+    //Prepare JWT with claims set
+    JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+        .subject(currentUser.getEmail())
+        .expirationTime(new Date(expirationTime))
+        .build();
+    SignedJWT signedJwt = new SignedJWT(new JWSHeader(JWS_ALGORITHM), claimsSet);
+    //Apply the HMAC protection
+    try {
+      signedJwt.sign(jwtSignerProvider.getJwsSigner(JwtTokenEnum.JWT_REFRESH_TOKEN));
+    } catch (JOSEException e) {
+      throw new JwtException("Can't sign refresh token email [email: " + currentUser.getEmail() + "]");
     }
     return signedJwt.serialize();
   }
@@ -83,31 +120,40 @@ public class JwtTokenService {
    * @param token token
    * @return
    */
-  public Mono<SignedJWT> checkToken(String token) {
+  public SignedJWT checkToken(JwtTokenEnum jwtTokenEnum, String token) {
     // Parse the JWS and verify its RSA signature
-    SignedJWT signedJWT;
+    SignedJWT signedJwt;
     try {
-      signedJWT = SignedJWT.parse(token);
-      JWSVerifier verifier = new MACVerifier(jwtConfiguration.getJwtSecret());
-      if (signedJWT.verify(verifier)) {
-        return Mono.just(signedJWT);
+      signedJwt = SignedJWT.parse(token);
+      JWSVerifier verifier;
+      switch (jwtTokenEnum) {
+        case JWT_ACCESS_TOKEN:
+          verifier = new MACVerifier(jwtConfiguration.getJwtAccessTokenSecret());
+          break;
+        case JWT_REFRESH_TOKEN:
+          verifier = new MACVerifier(jwtConfiguration.getJwtRefreshTokenSecret());
+          break;
+        default:
+          throw new JwtException("Unknown token type [jwtTokenEnum: " + jwtTokenEnum.name() + "]");
+      }
+      if (signedJwt.verify(verifier)) {
+        return signedJwt;
       } else {
-        return Mono.empty();
+        throw new JwtException("Can't verify token [token: " + token + "]");
       }
     } catch (ParseException | JOSEException e) {
-      log.error("Error parse token [token: {}]", token, e);
-      return Mono.empty();
+      throw new JwtException("Can't parse token [token: " + token + "]");
     }
   }
 
   /**
    * createAuthentication.
    *
-   * @param signedJwtMono signedJwtMono
+   * @param signedJwt signedJwt
    * @return
    */
-  public Authentication createAuthentication(Mono<SignedJWT> signedJwtMono) {
-    SignedJWT signedJwt = signedJwtMono.block();
+  public Authentication createAuthentication(SignedJWT signedJwt) {
+    checkExpiration(signedJwt);
     try {
       String subject = signedJwt.getJWTClaimsSet()
           .getSubject();
@@ -129,8 +175,19 @@ public class JwtTokenService {
           .collect(Collectors.toList());
       return new UsernamePasswordAuthenticationToken(currentUser, null, authorities);
     } catch (ParseException e) {
-      log.error("Error parse signedJwt [signedJwt: {}]", signedJwt, e);
-      return null;
+      throw new JwtException("Can't parse signedJwt [signedJwt: " + signedJwt + "]");
+    }
+  }
+
+  public void checkExpiration(SignedJWT signedJwt) {
+    try {
+      Date expiration = signedJwt.getJWTClaimsSet().getExpirationTime();
+      Instant expirationInstant = expiration.toInstant();
+      if (expirationInstant.isBefore(now())) {
+        throw new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]");
+      }
+    } catch (ParseException e) {
+      throw new JwtException("Can't parse signedJwt [signedJwt: " + signedJwt + "]");
     }
   }
 }
