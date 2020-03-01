@@ -40,12 +40,7 @@ public class JwtServerSecurityContextRepository implements ServerSecurityContext
         .filter(token -> !token.isEmpty())
         .map(token -> jwtTokenService.checkToken(token))
         .map(signedJWTMono -> jwtTokenService.createAuthentication(signedJWTMono))
-        .map(authentication -> jwtReactiveAuthenticationManager.authenticate(authentication))
-        .flatMap(authenticationMono ->
-            authenticationMono.map(authentication -> {
-              SecurityContext securityContext = new SecurityContextImpl(authentication);
-              return securityContext;
-            }))
-        .filter(Objects::nonNull);
+        .flatMap(authentication -> jwtReactiveAuthenticationManager.authenticate(authentication))
+        .map(SecurityContextImpl::new);
   }
 }

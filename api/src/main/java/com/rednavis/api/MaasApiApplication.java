@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @SpringBootApplication
@@ -43,20 +44,17 @@ public class MaasApiApplication implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     log.info("AppInitializator initialization logic ...");
     userService.existsByEmail(ADMIN_EMAIL)
-        .subscribe(result -> {
-              if (!result) {
-                String passwordToken = passwordService.generatePassword(ADMIN_PASSWORD);
-                User admin = createAdmin(passwordToken);
-                userService.save(admin).subscribe(user -> log.info(user + ""));
-              }
-            }
-        );
+        .filter(exist -> !exist)
+        .then(Mono.just(passwordService.generatePassword(ADMIN_PASSWORD)))
+        .map(this::createAdmin)
+        .map(admin -> userService.save(admin))
+        .subscribe(user -> log.info("Create default admin [admin: {}]", user));
   }
 
   private User createAdmin(String passwordToken) {
     return User.builder()
-        .firstName("adminName")
-        .lastName("adminLastName")
+        .firstName(User.Fields.firstName)
+        .lastName(User.Fields.lastName)
         .email(ADMIN_EMAIL)
         .password(passwordToken)
         .roles(Set.of(RoleEnum.ROLE_ADMIN))

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 class JwtConfiguration {
 
   @Value("${jwt.secretKey}")
-  private byte[] jwtSecret;
+  private String jwtSecret;
 
   @Value("${jwt.expirationInSec}")
   private int expirationInSec;

@@ -1,11 +1,12 @@
 package com.rednavis.auth.service.auth;
 
+import static com.rednavis.core.mapper.MapperProvider.CURRENT_USER_MAPPER;
+
 import com.rednavis.auth.jwt.JwtTokenService;
 import com.rednavis.auth.service.password.PasswordService;
 import com.rednavis.core.exception.BadRequestException;
 import com.rednavis.core.exception.ConflictException;
 import com.rednavis.core.exception.NotFoundException;
-import com.rednavis.core.mapper.CurrentUserMapper;
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.dto.user.User;
@@ -13,16 +14,14 @@ import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.request.SignUpRequest;
 import com.rednavis.shared.rest.response.SignInResponse;
 import com.rednavis.shared.rest.response.SignUpResponse;
+import com.rednavis.shared.security.CurrentUser;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-
-  private static final CurrentUserMapper CURRENT_USER_MAPPER = CurrentUserMapper.CURRENT_USER_MAPPER;
 
   @Autowired
   private PasswordService passwordService;
@@ -44,8 +43,8 @@ public class AuthServiceImpl implements AuthService {
         .filter(user -> passwordService.validatePassword(user.getPassword(), signInRequest.getPassword()))
         .switchIfEmpty(Mono.error(new BadRequestException("Wrong email or password")))
         .map(user -> {
-          UserDetails userDetails = CURRENT_USER_MAPPER.userToCurrentUserDetails(user);
-          String token = jwtTokenService.generateToken(userDetails);
+          CurrentUser currentUser = CURRENT_USER_MAPPER.userToCurrentUser(user);
+          String token = jwtTokenService.generateToken(currentUser);
           return SignInResponse.builder()
               .accessToken(token)
               .build();

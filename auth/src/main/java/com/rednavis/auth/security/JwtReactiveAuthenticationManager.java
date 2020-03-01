@@ -1,23 +1,26 @@
 package com.rednavis.auth.security;
 
-import com.rednavis.core.mapper.CurrentUserMapper;
+import static com.rednavis.core.mapper.MapperProvider.CURRENT_USER_MAPPER;
+
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.User;
+import com.rednavis.shared.security.CurrentUser;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
 public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
-
-  private static final CurrentUserMapper CURRENT_USER_MAPPER = CurrentUserMapper.CURRENT_USER_MAPPER;
 
   @Autowired
   private UserService userService;
@@ -36,8 +39,12 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
   }
 
   private Authentication createAuthentication(User user, Authentication authentication) {
-    UserDetails userDetails = CURRENT_USER_MAPPER.userToCurrentUserDetails(user);
-    return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+    CurrentUser currentUser = CURRENT_USER_MAPPER.userToCurrentUser(user);
+    Collection<? extends GrantedAuthority> authorities = currentUser.getRoles()
+        .stream()
+        .map(role -> new SimpleGrantedAuthority(role.name()))
+        .collect(Collectors.toList());
+    return new UsernamePasswordAuthenticationToken(currentUser, authentication.getCredentials(), authorities);
   }
 
   private <T> Mono<T> raiseBadCredentials() {

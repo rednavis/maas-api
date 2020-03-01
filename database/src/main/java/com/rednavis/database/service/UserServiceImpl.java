@@ -1,7 +1,8 @@
 package com.rednavis.database.service;
 
+import static com.rednavis.database.mapper.MapperProvider.USER_MAPPER;
+
 import com.rednavis.core.service.CurrentUserService;
-import com.rednavis.database.mapper.UserMapper;
 import com.rednavis.database.repository.UserRepository;
 import com.rednavis.shared.dto.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-
-  private static final UserMapper USER_MAPPER = UserMapper.USER_MAPPER;
 
   @Autowired
   private UserRepository userRepository;

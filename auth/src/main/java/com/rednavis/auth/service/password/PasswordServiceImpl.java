@@ -1,5 +1,6 @@
 package com.rednavis.auth.service.password;
 
+import com.rednavis.core.exception.MaasApiException;
 import edu.vt.middleware.password.Password;
 import edu.vt.middleware.password.PasswordData;
 import edu.vt.middleware.password.PasswordValidator;
@@ -33,7 +34,7 @@ public class PasswordServiceImpl implements PasswordService {
       return PasswordUtils.createHash(password);
     } catch (CannotPerformOperationException e) {
       log.error("Can't generate password [password: {}]", password, e);
-      throw new RuntimeException("Can't validate [password: " + password + "]");
+      throw new MaasApiException("Can't validate [password: " + password + "]");
     }
   }
 
@@ -43,7 +44,7 @@ public class PasswordServiceImpl implements PasswordService {
       return PasswordUtils.verifyPassword(password, passwordDb);
     } catch (CannotPerformOperationException | InvalidHashException e) {
       log.error("Can't validate password [password: {}]", password, e);
-      throw new RuntimeException("Can't validate [password: " + password + "]");
+      throw new MaasApiException("Can't validate [password: " + password + "]");
     }
   }
 }
