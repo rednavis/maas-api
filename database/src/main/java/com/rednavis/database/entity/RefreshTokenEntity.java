@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document
+@Document("refreshToken")
 @EqualsAndHashCode(callSuper = true)
+//TODO LAV - Create scheduler for delete expired tokens
 public class RefreshTokenEntity extends AbstractEntity {
 
   @Id
@@ -18,6 +18,5 @@ public class RefreshTokenEntity extends AbstractEntity {
   @Indexed(unique = true)
   private String refreshToken;
   private Instant expiration;
-  @DBRef
-  private UserEntity userEntity;
+  private String userId;
 }

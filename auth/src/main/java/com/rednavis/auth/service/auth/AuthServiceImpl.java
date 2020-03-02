@@ -3,13 +3,13 @@ package com.rednavis.auth.service.auth;
 import static com.rednavis.core.mapper.MapperProvider.CURRENT_USER_MAPPER;
 import static com.rednavis.database.mapper.MapperProvider.USER_MAPPER;
 
-import com.nimbusds.jwt.SignedJWT;
 import com.rednavis.auth.jwt.JwtTokenEnum;
 import com.rednavis.auth.jwt.JwtTokenInfo;
 import com.rednavis.auth.jwt.JwtTokenService;
 import com.rednavis.auth.service.password.PasswordService;
 import com.rednavis.core.exception.BadRequestException;
 import com.rednavis.core.exception.ConflictException;
+import com.rednavis.core.exception.JwtException;
 import com.rednavis.core.exception.NotFoundException;
 import com.rednavis.database.entity.RefreshTokenEntity;
 import com.rednavis.database.entity.UserEntity;
@@ -65,8 +65,7 @@ public class AuthServiceImpl implements AuthService {
    */
   @Override
   public Mono<SignUpResponse> signUp(SignUpRequest signUpRequest) {
-    return userService.existsByEmail(signUpRequest.getEmail())
-        .filter(exist -> !exist)
+    return userService.findByEmail(signUpRequest.getEmail())
         .switchIfEmpty(Mono.error(new ConflictException("Wrong email [email: " + signUpRequest.getEmail() + "] is already taken")))
         .then(userService.save(createNewUser(signUpRequest)))
         .map(user -> SignUpResponse.builder()
@@ -77,13 +76,17 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public Mono<SignInResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) {
     return Mono.just(refreshTokenRequest.getRefreshToken())
-        .doOnNext(token -> {
-          SignedJWT signedJwt = jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token);
-          jwtTokenService.checkExpiration(signedJwt);
-        })
+        .flatMap(token -> Mono.defer(() -> Mono.just(jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token))
+            .map(signedJwt -> jwtTokenService.checkExpiration(signedJwt))
+            .filter(expire -> !expire)
+            //TODO LAV How get signedJwt ?
+            //.switchIfEmpty(Mono.error(new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]")))
+            .switchIfEmpty(Mono.error(new JwtException("Current token is expired [token: ]")))
+            .thenReturn(token)))
         .flatMap(token -> refreshTokenRepository.findRefreshTokenEntityByRefreshToken(token))
         .filter(Objects::nonNull)
-        .flatMap(refreshTokenEntity -> userService.findById(refreshTokenEntity.getId()))
+        .flatMap(refreshTokenEntity -> refreshTokenRepository.deleteById(refreshTokenEntity.getId())
+            .then(userService.findById(refreshTokenEntity.getUserId())))
         .flatMap(this::generateTokens);
   }
 
@@ -107,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
     RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity();
     refreshTokenEntity.setRefreshToken(refreshToken.getToken());
     refreshTokenEntity.setExpiration(Instant.ofEpochMilli(refreshToken.getExpirationTime()));
-    refreshTokenEntity.setUserEntity(userEntity);
+    refreshTokenEntity.setUserId(userEntity.getId());
     return refreshTokenRepository.save(refreshTokenEntity);
   }
 

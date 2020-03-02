@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document
+@Document("user")
 @EqualsAndHashCode(callSuper = true)
 public class UserEntity extends AbstractEntity {
 

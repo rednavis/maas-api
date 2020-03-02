@@ -11,8 +11,6 @@ public interface UserService {
 
   Mono<User> save(User user);
 
-  Mono<Boolean> existsByEmail(String email);
-
   Mono<String> user();
 
   Mono<String> admin();

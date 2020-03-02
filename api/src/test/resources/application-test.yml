@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      database: test
+      auto-index-creation: true
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG

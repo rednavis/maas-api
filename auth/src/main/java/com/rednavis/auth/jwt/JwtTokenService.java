@@ -153,7 +153,10 @@ public class JwtTokenService {
    * @return
    */
   public Authentication createAuthentication(SignedJWT signedJwt) {
-    checkExpiration(signedJwt);
+    if (checkExpiration(signedJwt)) {
+      throw new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]");
+    }
+
     try {
       String subject = signedJwt.getJWTClaimsSet()
           .getSubject();
@@ -175,19 +178,22 @@ public class JwtTokenService {
           .collect(Collectors.toList());
       return new UsernamePasswordAuthenticationToken(currentUser, null, authorities);
     } catch (ParseException e) {
-      throw new JwtException("Can't parse signedJwt [signedJwt: " + signedJwt + "]");
+      throw new JwtException("Can't parse signedJwt [signedJwt: " + signedJwt.serialize() + "]");
     }
   }
 
-  public void checkExpiration(SignedJWT signedJwt) {
+  /**
+   * checkExpiration.
+   *
+   * @param signedJwt signedJwt
+   */
+  public boolean checkExpiration(SignedJWT signedJwt) {
     try {
       Date expiration = signedJwt.getJWTClaimsSet().getExpirationTime();
       Instant expirationInstant = expiration.toInstant();
-      if (expirationInstant.isBefore(now())) {
-        throw new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]");
-      }
+      return expirationInstant.isBefore(now());
     } catch (ParseException e) {
-      throw new JwtException("Can't parse signedJwt [signedJwt: " + signedJwt + "]");
+      throw new JwtException("Can't parse signedJwt [signedJwt: " + signedJwt.serialize() + "]");
     }
   }
 }

@@ -40,11 +40,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Mono<Boolean> existsByEmail(String email) {
-    return userRepository.existsByEmail(email);
-  }
-
-  @Override
   public Mono<String> user() {
     return Mono.just("Content for user");
   }
