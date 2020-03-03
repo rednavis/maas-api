@@ -97,7 +97,9 @@ public class AuthServiceImpl implements AuthService {
     return saveRefreshToken(user, refreshToken)
         .thenReturn(SignInResponse.builder()
             .accessToken(accessToken.getToken())
+            .accessTokenExpiration(accessToken.getTokenExpiration())
             .refreshToken(refreshToken.getToken())
+            .refreshTokenExpiration(refreshToken.getTokenExpiration())
             .build());
   }
 

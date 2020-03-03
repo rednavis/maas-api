@@ -6,5 +6,6 @@ import lombok.Data;
 public class JwtTokenInfo {
 
   private String token;
+  private int tokenExpiration;
   private long expirationTime;
 }
