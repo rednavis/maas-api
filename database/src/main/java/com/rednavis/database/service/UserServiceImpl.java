@@ -5,19 +5,18 @@ import static com.rednavis.database.mapper.MapperProvider.USER_MAPPER;
 import com.rednavis.core.service.CurrentUserService;
 import com.rednavis.database.repository.UserRepository;
 import com.rednavis.shared.dto.user.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private CurrentUserService currentUserService;
+  private final UserRepository userRepository;
+  private final CurrentUserService currentUserService;
 
   @Override
   public Mono<User> findByEmail(String email) {

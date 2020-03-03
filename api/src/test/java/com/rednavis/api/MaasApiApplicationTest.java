@@ -44,8 +44,7 @@ public abstract class MaasApiApplicationTest {
         .verifyComplete();
   }
 
-  static class Initializer implements
-      ApplicationContextInitializer<ConfigurableApplicationContext> {
+  static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
       TestPropertyValues.of(

@@ -26,21 +26,18 @@ import com.rednavis.shared.security.CurrentUser;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-  @Autowired
-  private PasswordService passwordService;
-  @Autowired
-  private JwtTokenService jwtTokenService;
-  @Autowired
-  private UserService userService;
-  @Autowired
-  private RefreshTokenRepository refreshTokenRepository;
+  private final PasswordService passwordService;
+  private final JwtTokenService jwtTokenService;
+  private final UserService userService;
+  private final RefreshTokenRepository refreshTokenRepository;
 
   /**
    * signIn.

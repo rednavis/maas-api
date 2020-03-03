@@ -7,16 +7,16 @@ import edu.vt.middleware.password.PasswordValidator;
 import edu.vt.middleware.password.RuleResult;
 import java.util.Collections;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PasswordServiceImpl implements PasswordService {
 
-  @Autowired
-  private PasswordValidator passwordValidator;
+  private final PasswordValidator passwordValidator;
 
   @Override
   public List<String> checkPasswordComplexity(String password) {

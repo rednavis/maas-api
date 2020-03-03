@@ -18,8 +18,7 @@ import com.rednavis.shared.rest.response.SignUpResponse;
 import com.rednavis.shared.security.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,13 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping(value = AUTH_URL, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(AUTH_URL)
+@RequiredArgsConstructor
 public class AuthController {
 
-  @Autowired
-  private AuthService authService;
-  @Autowired
-  private CurrentUserService currentUserService;
+  private final AuthService authService;
+  private final CurrentUserService currentUserService;
 
   @PostMapping(AUTH_URL_SIGNIN)
   public Mono<ApiResponse<SignInResponse>> signIn(@RequestBody SignInRequest signInRequest) {

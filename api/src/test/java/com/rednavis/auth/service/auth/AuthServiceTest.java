@@ -19,11 +19,13 @@ import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.response.SignInResponse;
 import com.rednavis.shared.security.CurrentUser;
 import java.time.Instant;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+@RequiredArgsConstructor
 class AuthServiceTest extends MaasApiApplicationTest {
 
   @Autowired

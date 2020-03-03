@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,14 +29,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.server.ServerWebExchange;
 
 @Configuration
+@RequiredArgsConstructor
 public class JwtTokenService {
 
   private static final JWSAlgorithm JWS_ALGORITHM = JWSAlgorithm.HS256;
 
-  @Autowired
-  private JwtConfiguration jwtConfiguration;
-  @Autowired
-  private JwtSignerProvider jwtSignerProvider;
+  private final JwtConfiguration jwtConfiguration;
+  private final JwtSignerProvider jwtSignerProvider;
 
   /**
    * Create and sign a JWT object using information from the current authenticated principal.

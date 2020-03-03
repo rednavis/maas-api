@@ -8,8 +8,8 @@ import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.dto.user.User;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationListener;
@@ -23,15 +23,14 @@ import reactor.core.publisher.Mono;
 @Import({AuthModule.class,
     CoreModule.class,
     DatabaseModule.class})
+@RequiredArgsConstructor
 public class MaasApiApplication {
 
   public static final String ADMIN_EMAIL = "admin@admin.com";
   public static final String ADMIN_PASSWORD = "1@QWaszx";
 
-  @Autowired
-  private PasswordService passwordService;
-  @Autowired
-  private UserService userService;
+  private final PasswordService passwordService;
+  private final UserService userService;
 
   public static void main(String... args) {
     SpringApplication.run(MaasApiApplication.class, args);

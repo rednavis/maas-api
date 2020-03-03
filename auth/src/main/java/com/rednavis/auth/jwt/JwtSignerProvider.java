@@ -5,7 +5,6 @@ import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.rednavis.core.exception.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -20,7 +19,6 @@ class JwtSignerProvider {
    *
    * @param jwtConfiguration jwtConfiguration
    */
-  @Autowired
   public JwtSignerProvider(JwtConfiguration jwtConfiguration) {
     JWSSigner initAccessToken;
     JWSSigner initRefreshToken;
