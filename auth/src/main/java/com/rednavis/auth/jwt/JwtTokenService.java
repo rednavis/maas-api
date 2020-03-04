@@ -48,13 +48,13 @@ public class JwtTokenService {
 
     switch (jwtTokenEnum) {
       case JWT_ACCESS_TOKEN:
-        jwtTokenInfo.setTokenExpiration(jwtConfiguration.getJwtAccessTokenExpirationInSec());
-        jwtTokenInfo.setExpirationTime(currentTime + jwtTokenInfo.getTokenExpiration() * 1000);
+        jwtTokenInfo.setTokenExpirationInSec(jwtConfiguration.getJwtAccessTokenExpirationInSec());
+        jwtTokenInfo.setExpirationTime(currentTime + jwtTokenInfo.getTokenExpirationInSec() * 1000);
         jwtTokenInfo.setToken(generateAccessToken(currentUser, jwtTokenInfo.getExpirationTime()));
         break;
       case JWT_REFRESH_TOKEN:
-        jwtTokenInfo.setTokenExpiration(jwtConfiguration.getJwtRefreshTokenExpirationInSec());
-        jwtTokenInfo.setExpirationTime(currentTime + jwtTokenInfo.getTokenExpiration() * 1000);
+        jwtTokenInfo.setTokenExpirationInSec(jwtConfiguration.getJwtRefreshTokenExpirationInSec());
+        jwtTokenInfo.setExpirationTime(currentTime + jwtTokenInfo.getTokenExpirationInSec() * 1000);
         jwtTokenInfo.setToken(generateRefreshToken(currentUser, jwtTokenInfo.getExpirationTime()));
         break;
       default:
