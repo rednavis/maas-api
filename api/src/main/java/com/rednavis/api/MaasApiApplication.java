@@ -29,6 +29,9 @@ public class MaasApiApplication {
   public static final String ADMIN_EMAIL = "admin@admin.com";
   public static final String ADMIN_USERNAME = "admin";
   public static final String ADMIN_PASSWORD = "admin";
+  public static final String USER_EMAIL = "user@user.com";
+  public static final String USER_USERNAME = "user";
+  public static final String USER_PASSWORD = "user";
 
   private final PasswordService passwordService;
   private final UserService userService;
@@ -47,8 +50,17 @@ public class MaasApiApplication {
           .doOnNext(admin -> log.info("Default admin has been found [admin: {}]", admin))
           .switchIfEmpty(
               Mono.defer(() -> {
-                log.info("There is no default admin  about your search criteria [criteria: {}]", ADMIN_EMAIL);
+                log.info("There is no default admin about your search criteria [criteria: {}]", ADMIN_EMAIL);
                 return Mono.just(createAdmin());
+              })
+                  .flatMap(userService::save))
+          .subscribe();
+      userService.findByEmail(USER_EMAIL)
+          .doOnNext(user -> log.info("Default user has been found [user: {}]", user))
+          .switchIfEmpty(
+              Mono.defer(() -> {
+                log.info("There is no default user about your search criteria [criteria: {}]", USER_EMAIL);
+                return Mono.just(createUser());
               })
                   .flatMap(userService::save))
           .subscribe();
@@ -63,6 +75,18 @@ public class MaasApiApplication {
           .userName(ADMIN_USERNAME)
           .password(passwordToken)
           .roles(Set.of(RoleEnum.ROLE_ADMIN))
+          .build();
+    }
+
+    private User createUser() {
+      String passwordToken = passwordService.generatePassword(USER_PASSWORD);
+      return User.builder()
+          .firstName(User.Fields.firstName)
+          .lastName(User.Fields.lastName)
+          .email(USER_EMAIL)
+          .userName(USER_USERNAME)
+          .password(passwordToken)
+          .roles(Set.of(RoleEnum.ROLE_USER))
           .build();
     }
   }
