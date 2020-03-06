@@ -23,6 +23,7 @@ import com.rednavis.shared.rest.request.SignUpRequest;
 import com.rednavis.shared.rest.response.SignInResponse;
 import com.rednavis.shared.rest.response.SignUpResponse;
 import com.rednavis.shared.security.CurrentUser;
+import com.rednavis.shared.util.StringUtils;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
@@ -47,11 +48,21 @@ public class AuthServiceImpl implements AuthService {
    */
   @Override
   public Mono<SignInResponse> signIn(SignInRequest signInRequest) {
-    return userService.findByEmail(signInRequest.getEmail())
-        .switchIfEmpty(Mono.error(new NotFoundException("User not found [email: " + signInRequest.getEmail() + "]")))
+    return Mono.just(StringUtils.isEmailValid(signInRequest.getUserName()))
+        .flatMap(isValid -> (isValid) ? findByEmail(signInRequest.getUserName()) : findByUserName(signInRequest.getUserName()))
         .filter(user -> passwordService.validatePassword(user.getPassword(), signInRequest.getPassword()))
         .switchIfEmpty(Mono.error(new BadRequestException("Wrong email or password")))
         .flatMap(this::generateTokens);
+  }
+
+  private Mono<User> findByEmail(String email) {
+    return userService.findByEmail(email)
+        .switchIfEmpty(Mono.error(new NotFoundException("User not found [email: " + email + "]")));
+  }
+
+  private Mono<User> findByUserName(String userName) {
+    return userService.findByUserName(userName)
+        .switchIfEmpty(Mono.error(new NotFoundException("User not found [userName: " + userName + "]")));
   }
 
   /**
@@ -74,13 +85,13 @@ public class AuthServiceImpl implements AuthService {
   public Mono<SignInResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) {
     return Mono.just(refreshTokenRequest.getRefreshToken())
         .flatMap(token -> Mono.defer(() -> Mono.just(jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token))
-            .map(signedJwt -> jwtTokenService.checkExpiration(signedJwt))
+            .map(jwtTokenService::checkExpiration)
             .filter(expire -> !expire)
             //TODO LAV How get signedJwt ?
             //.switchIfEmpty(Mono.error(new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]")))
             .switchIfEmpty(Mono.error(new JwtException("Current token is expired [token: ]")))
             .thenReturn(token)))
-        .flatMap(token -> refreshTokenRepository.findRefreshTokenEntityByRefreshToken(token))
+        .flatMap(refreshTokenRepository::findRefreshTokenEntityByRefreshToken)
         .filter(Objects::nonNull)
         .flatMap(refreshTokenEntity -> refreshTokenRepository.deleteById(refreshTokenEntity.getId())
             .then(userService.findById(refreshTokenEntity.getUserId())))

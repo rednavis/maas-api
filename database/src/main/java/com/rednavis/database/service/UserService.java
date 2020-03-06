@@ -7,6 +7,8 @@ public interface UserService {
 
   Mono<User> findByEmail(String email);
 
+  Mono<User> findByUserName(String userName);
+
   Mono<User> findById(String id);
 
   Mono<User> save(User user);

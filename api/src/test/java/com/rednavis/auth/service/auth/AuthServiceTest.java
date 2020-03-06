@@ -36,9 +36,25 @@ class AuthServiceTest extends MaasApiApplicationTest {
   private UserService userService;
 
   @Test
-  void signInSuccess() {
+  void signInEmailSuccess() {
     SignInRequest signInRequest = SignInRequest.builder()
-        .email(MaasApiApplication.ADMIN_EMAIL)
+        .userName(MaasApiApplication.ADMIN_EMAIL)
+        .password(MaasApiApplication.ADMIN_PASSWORD)
+        .build();
+    Mono<SignInResponse> signInResponseMono = authService.signIn(signInRequest);
+    StepVerifier
+        .create(signInResponseMono)
+        .assertNext(signInResponse -> {
+          assertNotNull(signInResponse.getAccessToken());
+          assertNotNull(signInResponse.getRefreshToken());
+        })
+        .verifyComplete();
+  }
+
+  @Test
+  void signInUserNameSuccess() {
+    SignInRequest signInRequest = SignInRequest.builder()
+        .userName(MaasApiApplication.ADMIN_USERNAME)
         .password(MaasApiApplication.ADMIN_PASSWORD)
         .build();
     Mono<SignInResponse> signInResponseMono = authService.signIn(signInRequest);

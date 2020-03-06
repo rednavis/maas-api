@@ -8,4 +8,6 @@ import reactor.core.publisher.Mono;
 public interface UserRepository extends GlobalReactiveMongoRepository<UserEntity, String> {
 
   Mono<UserEntity> findByEmail(String email);
+
+  Mono<UserEntity> findByUserName(String userName);
 }

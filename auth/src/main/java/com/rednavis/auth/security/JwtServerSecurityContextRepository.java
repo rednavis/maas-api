@@ -33,16 +33,16 @@ public class JwtServerSecurityContextRepository implements ServerSecurityContext
   @Override
   public Mono<SecurityContext> load(ServerWebExchange serverWebExchange) {
     return Mono.justOrEmpty(serverWebExchange)
-        .map(swe -> jwtTokenService.extractAuthorization(swe))
+        .map(jwtTokenService::extractAuthorization)
         .filter(Objects::nonNull)
         .filter(matchBearerLength)
         .map(isolateBearerValue)
         .filter(token -> !token.isEmpty())
         .map(token -> jwtTokenService.checkToken(JwtTokenEnum.JWT_ACCESS_TOKEN, token))
         .filter(Objects::nonNull)
-        .map(signedJWTMono -> jwtTokenService.createAuthentication(signedJWTMono))
+        .map(jwtTokenService::createAuthentication)
         .filter(Objects::nonNull)
-        .flatMap(authentication -> jwtReactiveAuthenticationManager.authenticate(authentication))
+        .flatMap(jwtReactiveAuthenticationManager::authenticate)
         .map(SecurityContextImpl::new);
   }
 }

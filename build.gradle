@@ -15,12 +15,8 @@ ext {
     nimbusJoseJwtVersion = '8.9'
     vtPasswordVersion = '3.1.2'
     jupiterVersion = '5.6.0'
-    testcontainersVersion = '1.12.5'
+    testcontainersVersion = '1.13.0'
     reactorTestVersion = '3.3.3.RELEASE'
-}
-
-configurations.all {
-    exclude group: 'junit', module: 'junit'
 }
 
 allprojects {
@@ -28,6 +24,10 @@ allprojects {
     // needed because of multi-module configuration
     apply plugin: 'jacoco'
     apply plugin: 'io.spring.dependency-management'
+
+    configurations.all {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 
     repositories {
         jcenter()
@@ -108,6 +108,14 @@ codeCoverageReport.dependsOn {
     subprojects*.test
 }
 
+clean {
+    dependsOn gradle.includedBuild('maas-shared').task(':clean')
+}
+
+test {
+    dependsOn gradle.includedBuild('maas-shared').task(':test')
+}
+
 wrapper {
-    gradleVersion = "6.2.1"
+    gradleVersion = "6.2.2"
 }

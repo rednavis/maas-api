@@ -1,7 +1,7 @@
 apply plugin: 'checkstyle'
 
 checkstyle {
-    toolVersion '8.29'
+    toolVersion '8.30'
     ignoreFailures = false
     configDirectory = rootProject.file("config/checkstyle")
     configFile = rootProject.file("${rootDir}/config/checkstyle/checkstyle.xml")

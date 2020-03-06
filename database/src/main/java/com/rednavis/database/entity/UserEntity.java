@@ -19,6 +19,8 @@ public class UserEntity extends AbstractEntity {
   private String lastName;
   @Indexed(unique = true)
   private String email;
+  @Indexed(unique = true)
+  private String userName;
   private String password;
   private Set<RoleEnum> roles;
 }

@@ -25,6 +25,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public Mono<User> findByUserName(String userName) {
+    return userRepository.findByUserName(userName)
+        .map(USER_MAPPER::entityToDto);
+  }
+
+  @Override
   public Mono<User> findById(String id) {
     return userRepository.findById(id)
         .map(USER_MAPPER::entityToDto);
@@ -34,7 +40,7 @@ public class UserServiceImpl implements UserService {
   public Mono<User> save(User user) {
     return Mono.just(user)
         .map(USER_MAPPER::dtoToEntity)
-        .flatMap(userEntity -> userRepository.save(userEntity))
+        .flatMap(userRepository::save)
         .map(USER_MAPPER::entityToDto);
   }
 

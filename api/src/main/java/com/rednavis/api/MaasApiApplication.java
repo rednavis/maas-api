@@ -27,7 +27,8 @@ import reactor.core.publisher.Mono;
 public class MaasApiApplication {
 
   public static final String ADMIN_EMAIL = "admin@admin.com";
-  public static final String ADMIN_PASSWORD = "1@QWaszx";
+  public static final String ADMIN_USERNAME = "admin";
+  public static final String ADMIN_PASSWORD = "admin";
 
   private final PasswordService passwordService;
   private final UserService userService;
@@ -43,9 +44,14 @@ public class MaasApiApplication {
     public void onApplicationEvent(ContextRefreshedEvent event) {
       log.info("ContextRefreshedEvent Initialization logic ...");
       userService.findByEmail(ADMIN_EMAIL)
-          .switchIfEmpty(Mono.just(createAdmin()))
-          .flatMap(admin -> userService.save(admin))
-          .subscribe(user -> log.info("Create default admin [admin: {}]", user));
+          .doOnNext(admin -> log.info("Default admin has been found [admin: {}]", admin))
+          .switchIfEmpty(
+              Mono.defer(() -> {
+                log.info("There is no default admin  about your search criteria [criteria: {}]", ADMIN_EMAIL);
+                return Mono.just(createAdmin());
+              })
+                  .flatMap(userService::save))
+          .subscribe();
     }
 
     private User createAdmin() {
@@ -54,10 +60,10 @@ public class MaasApiApplication {
           .firstName(User.Fields.firstName)
           .lastName(User.Fields.lastName)
           .email(ADMIN_EMAIL)
+          .userName(ADMIN_USERNAME)
           .password(passwordToken)
           .roles(Set.of(RoleEnum.ROLE_ADMIN))
           .build();
     }
-
   }
 }

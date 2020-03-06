@@ -72,6 +72,7 @@ public class JwtTokenService {
         .claim(CurrentUser.Fields.id, currentUser.getId())
         .claim(CurrentUser.Fields.firstName, currentUser.getFirstName())
         .claim(CurrentUser.Fields.lastName, currentUser.getLastName())
+        .claim(CurrentUser.Fields.userName, currentUser.getUserName())
         .claim(CurrentUser.Fields.roles, currentUser.getRoles()
             .stream()
             .map(Enum::name)
@@ -167,12 +168,14 @@ public class JwtTokenService {
           .getStringClaim(CurrentUser.Fields.firstName);
       String lastName = signedJwt.getJWTClaimsSet()
           .getStringClaim(CurrentUser.Fields.lastName);
+      String userName = signedJwt.getJWTClaimsSet()
+          .getStringClaim(CurrentUser.Fields.userName);
       String roleInLine = signedJwt.getJWTClaimsSet()
           .getStringClaim(CurrentUser.Fields.roles);
       Set<RoleEnum> roles = Stream.of(roleInLine.split(","))
           .map(RoleEnum::valueOf)
           .collect(Collectors.toSet());
-      CurrentUser currentUser = new CurrentUser(id, firstName, lastName, subject, roles);
+      CurrentUser currentUser = new CurrentUser(id, firstName, lastName, userName, subject, roles);
 
       Collection<? extends GrantedAuthority> authorities = Stream.of(roleInLine.split(","))
           .map(SimpleGrantedAuthority::new)
