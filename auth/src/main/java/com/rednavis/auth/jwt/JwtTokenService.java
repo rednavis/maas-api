@@ -9,8 +9,9 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.rednavis.core.exception.JwtAccessTokenExpiredException;
 import com.rednavis.core.exception.JwtException;
-import com.rednavis.core.exception.JwtExpiredException;
+import com.rednavis.core.exception.JwtRefreshTokenExpiredException;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.security.CurrentUser;
 import java.text.ParseException;
@@ -143,7 +144,14 @@ public class JwtTokenService {
         throw new JwtException("Can't verify token [token: " + token + "]");
       }
       if (checkExpiration(signedJwt)) {
-        throw new JwtExpiredException("Current token is expired [token: " + token + "]");
+        switch (jwtTokenEnum) {
+          case JWT_ACCESS_TOKEN:
+            throw new JwtAccessTokenExpiredException("Current accessToken is expired [token: " + token + "]");
+          case JWT_REFRESH_TOKEN:
+            throw new JwtRefreshTokenExpiredException("Current refreshToken is expired [token: " + token + "]");
+          default:
+            throw new JwtException("Unknown token type [jwtTokenEnum: " + jwtTokenEnum.name() + "]");
+        }
       }
       return signedJwt;
     } catch (ParseException | JOSEException e) {
