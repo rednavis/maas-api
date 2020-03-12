@@ -48,7 +48,8 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public Mono<SignInResponse> signIn(SignInRequest signInRequest) {
     return Mono.just(StringUtils.isEmailValid(signInRequest.getUserName()))
-        .flatMap(isValid -> (isValid) ? findByEmail(signInRequest.getUserName()) : findByUserName(signInRequest.getUserName()))
+        .flatMap(
+            isValid -> (isValid.booleanValue()) ? findByEmail(signInRequest.getUserName()) : findByUserName(signInRequest.getUserName()))
         .filter(user -> passwordService.validatePassword(user.getPassword(), signInRequest.getPassword()))
         .switchIfEmpty(Mono.error(new BadCredentialsException("Wrong email or password")))
         .flatMap(this::generateTokens);
@@ -83,8 +84,9 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public Mono<SignInResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) {
     return Mono.fromSupplier(refreshTokenRequest::getRefreshToken)
-        .doOnNext(token -> jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token))
-        .flatMap(refreshTokenRepository::findRefreshTokenEntityByRefreshToken)
+        .map(token -> jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token))
+        .filter(Objects::nonNull)
+        .flatMap(signedJwt -> refreshTokenRepository.findRefreshTokenEntityByRefreshToken(signedJwt.serialize()))
         .filter(Objects::nonNull)
         .flatMap(refreshTokenEntity -> refreshTokenRepository.deleteById(refreshTokenEntity.getId())
             .then(userService.findById(refreshTokenEntity.getUserId())))

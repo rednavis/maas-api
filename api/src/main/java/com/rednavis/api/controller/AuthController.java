@@ -45,7 +45,7 @@ public class AuthController {
   }
 
   @PostMapping(AUTH_URL_REFRESH_TOKEN)
-  public Mono<SignInResponse> signUp(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+  public Mono<SignInResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
     return authService.refreshToken(refreshTokenRequest);
   }
 

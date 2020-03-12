@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Document("refreshToken")
 @EqualsAndHashCode(callSuper = true)
-//TODO LAV - Create scheduler for delete expired tokens
 public class RefreshTokenEntity extends AbstractEntity {
 
   @Id
