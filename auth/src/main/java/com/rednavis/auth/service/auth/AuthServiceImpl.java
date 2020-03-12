@@ -7,10 +7,7 @@ import com.rednavis.auth.jwt.JwtTokenEnum;
 import com.rednavis.auth.jwt.JwtTokenInfo;
 import com.rednavis.auth.jwt.JwtTokenService;
 import com.rednavis.auth.service.password.PasswordService;
-import com.rednavis.core.exception.BadRequestException;
 import com.rednavis.core.exception.ConflictException;
-import com.rednavis.core.exception.JwtException;
-import com.rednavis.core.exception.NotFoundException;
 import com.rednavis.database.entity.RefreshTokenEntity;
 import com.rednavis.database.entity.UserEntity;
 import com.rednavis.database.repository.RefreshTokenRepository;
@@ -28,6 +25,8 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -51,18 +50,18 @@ public class AuthServiceImpl implements AuthService {
     return Mono.just(StringUtils.isEmailValid(signInRequest.getUserName()))
         .flatMap(isValid -> (isValid) ? findByEmail(signInRequest.getUserName()) : findByUserName(signInRequest.getUserName()))
         .filter(user -> passwordService.validatePassword(user.getPassword(), signInRequest.getPassword()))
-        .switchIfEmpty(Mono.error(new BadRequestException("Wrong email or password")))
+        .switchIfEmpty(Mono.error(new BadCredentialsException("Wrong email or password")))
         .flatMap(this::generateTokens);
   }
 
   private Mono<User> findByEmail(String email) {
     return userService.findByEmail(email)
-        .switchIfEmpty(Mono.error(new NotFoundException("User not found [email: " + email + "]")));
+        .switchIfEmpty(Mono.error(new UsernameNotFoundException("User not found [email: " + email + "]")));
   }
 
   private Mono<User> findByUserName(String userName) {
     return userService.findByUserName(userName)
-        .switchIfEmpty(Mono.error(new NotFoundException("User not found [userName: " + userName + "]")));
+        .switchIfEmpty(Mono.error(new UsernameNotFoundException("User not found [userName: " + userName + "]")));
   }
 
   /**
@@ -83,14 +82,8 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public Mono<SignInResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) {
-    return Mono.just(refreshTokenRequest.getRefreshToken())
-        .flatMap(token -> Mono.defer(() -> Mono.just(jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token))
-            .map(jwtTokenService::checkExpiration)
-            .filter(expire -> !expire)
-            //TODO LAV How get signedJwt ?
-            //.switchIfEmpty(Mono.error(new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]")))
-            .switchIfEmpty(Mono.error(new JwtException("Current token is expired [token: ]")))
-            .thenReturn(token)))
+    return Mono.fromSupplier(refreshTokenRequest::getRefreshToken)
+        .doOnNext(token -> jwtTokenService.checkToken(JwtTokenEnum.JWT_REFRESH_TOKEN, token))
         .flatMap(refreshTokenRepository::findRefreshTokenEntityByRefreshToken)
         .filter(Objects::nonNull)
         .flatMap(refreshTokenEntity -> refreshTokenRepository.deleteById(refreshTokenEntity.getId())

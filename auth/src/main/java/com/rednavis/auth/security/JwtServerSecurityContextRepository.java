@@ -39,7 +39,6 @@ public class JwtServerSecurityContextRepository implements ServerSecurityContext
         .map(isolateBearerValue)
         .filter(token -> !token.isEmpty())
         .map(token -> jwtTokenService.checkToken(JwtTokenEnum.JWT_ACCESS_TOKEN, token))
-        .filter(Objects::nonNull)
         .map(jwtTokenService::createAuthentication)
         .filter(Objects::nonNull)
         .flatMap(jwtReactiveAuthenticationManager::authenticate)

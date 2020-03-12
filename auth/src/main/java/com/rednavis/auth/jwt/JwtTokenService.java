@@ -10,6 +10,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.rednavis.core.exception.JwtException;
+import com.rednavis.core.exception.JwtExpiredException;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.security.CurrentUser;
 import java.text.ParseException;
@@ -138,11 +139,13 @@ public class JwtTokenService {
         default:
           throw new JwtException("Unknown token type [jwtTokenEnum: " + jwtTokenEnum.name() + "]");
       }
-      if (signedJwt.verify(verifier)) {
-        return signedJwt;
-      } else {
+      if (!signedJwt.verify(verifier)) {
         throw new JwtException("Can't verify token [token: " + token + "]");
       }
+      if (checkExpiration(signedJwt)) {
+        throw new JwtExpiredException("Current token is expired [token: " + token + "]");
+      }
+      return signedJwt;
     } catch (ParseException | JOSEException e) {
       throw new JwtException("Can't parse token [token: " + token + "]");
     }
@@ -155,10 +158,6 @@ public class JwtTokenService {
    * @return
    */
   public Authentication createAuthentication(SignedJWT signedJwt) {
-    if (checkExpiration(signedJwt)) {
-      throw new JwtException("Current token is expired [token: " + signedJwt.serialize() + "]");
-    }
-
     try {
       String subject = signedJwt.getJWTClaimsSet()
           .getSubject();
@@ -191,7 +190,7 @@ public class JwtTokenService {
    *
    * @param signedJwt signedJwt
    */
-  public boolean checkExpiration(SignedJWT signedJwt) {
+  private boolean checkExpiration(SignedJWT signedJwt) {
     try {
       Date expiration = signedJwt.getJWTClaimsSet().getExpirationTime();
       Instant expirationInstant = expiration.toInstant();

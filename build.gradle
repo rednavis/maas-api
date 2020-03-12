@@ -12,7 +12,7 @@ ext {
     mapstructVersion = '1.3.1.Final'
     springBootVersion = '2.2.5.RELEASE'
     springDocVersion = '1.2.33'
-    nimbusJoseJwtVersion = '8.9'
+    nimbusJoseJwtVersion = '8.10'
     vtPasswordVersion = '3.1.2'
     jupiterVersion = '5.6.0'
     testcontainersVersion = '1.13.0'
