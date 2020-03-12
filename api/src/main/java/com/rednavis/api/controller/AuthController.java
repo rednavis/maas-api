@@ -9,7 +9,6 @@ import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_SIGNUP;
 
 import com.rednavis.auth.service.auth.AuthService;
 import com.rednavis.core.service.CurrentUserService;
-import com.rednavis.shared.rest.ApiResponse;
 import com.rednavis.shared.rest.request.RefreshTokenRequest;
 import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.request.SignUpRequest;
@@ -36,21 +35,18 @@ public class AuthController {
   private final CurrentUserService currentUserService;
 
   @PostMapping(AUTH_URL_SIGNIN)
-  public Mono<ApiResponse<SignInResponse>> signIn(@RequestBody SignInRequest signInRequest) {
-    return authService.signIn(signInRequest)
-        .map(ApiResponse::createSuccessResponse);
+  public Mono<SignInResponse> signIn(@RequestBody SignInRequest signInRequest) {
+    return authService.signIn(signInRequest);
   }
 
   @PostMapping(AUTH_URL_SIGNUP)
-  public Mono<ApiResponse<SignUpResponse>> signUp(@RequestBody SignUpRequest signUpRequest) {
-    return authService.signUp(signUpRequest)
-        .map(ApiResponse::createSuccessResponse);
+  public Mono<SignUpResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
+    return authService.signUp(signUpRequest);
   }
 
   @PostMapping(AUTH_URL_REFRESH_TOKEN)
-  public Mono<ApiResponse<SignInResponse>> signUp(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-    return authService.refreshToken(refreshTokenRequest)
-        .map(ApiResponse::createSuccessResponse);
+  public Mono<SignInResponse> signUp(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    return authService.refreshToken(refreshTokenRequest);
   }
 
   /**
@@ -61,8 +57,7 @@ public class AuthController {
   @GetMapping(AUTH_URL_CURRENTUSER)
   @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
   @Operation(security = @SecurityRequirement(name = BEARER_AUTH))
-  public Mono<ApiResponse<CurrentUser>> getCurrentUser() {
-    return currentUserService.getCurrentUser()
-        .map(ApiResponse::createSuccessResponse);
+  public Mono<CurrentUser> getCurrentUser() {
+    return currentUserService.getCurrentUser();
   }
 }
