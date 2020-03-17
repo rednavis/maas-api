@@ -1,6 +1,7 @@
 package com.rednavis.database.service;
 
 import com.rednavis.shared.dto.user.User;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserService {
@@ -16,4 +17,6 @@ public interface UserService {
   Mono<String> user();
 
   Mono<String> admin();
+
+  Flux<User> findAll();
 }
