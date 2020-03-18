@@ -2,6 +2,7 @@ package com.rednavis.api.config;
 
 import static com.rednavis.api.config.SwaggerConfig.BEARER_AUTH;
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
+import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_PATTERN;
 import static com.rednavis.shared.util.RestUrlUtils.USER_URL_PATTERN;
 
 import com.rednavis.api.controller.AuthController;
@@ -66,6 +67,15 @@ public class SwaggerConfig {
     GroupInfo groupInfo = GroupInfo.builder()
         .paths(new String[] {USER_URL_PATTERN})
         .group("user")
+        .build();
+    return createNewGroup(groupInfo);
+  }
+
+  @Bean
+  public GroupedOpenApi bookOpenApi() {
+    GroupInfo groupInfo = GroupInfo.builder()
+        .paths(new String[] {BOOK_URL_PATTERN})
+        .group("book")
         .build();
     return createNewGroup(groupInfo);
   }

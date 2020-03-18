@@ -1,3 +1,7 @@
+maas:
+  bpm:
+    server: http://localhost:8082
+
 # Application
 server:
   port: 8081

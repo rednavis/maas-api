@@ -1,6 +1,7 @@
 package com.rednavis.auth.config;
 
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
+import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_PATTERN;
 
 import com.rednavis.auth.security.JwtReactiveAuthenticationManager;
 import com.rednavis.auth.security.JwtServerSecurityContextRepository;
@@ -66,6 +67,7 @@ public class SecurityConfig {
         .authorizeExchange()
         .pathMatchers(HttpMethod.OPTIONS).permitAll()
         .pathMatchers(AUTH_URL_PATTERN).permitAll()
+        .pathMatchers(BOOK_URL_PATTERN).permitAll()
         .pathMatchers(AUTH_WHITELIST.toArray(new String[AUTH_WHITELIST.size()])).permitAll()
         .anyExchange().authenticated().and()
         .build();
