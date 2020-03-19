@@ -96,7 +96,7 @@ public class BookController {
   @GetMapping(BOOK_URL_COUNT)
   public Mono<Long> count() {
     WebClient webClient = createWebClient();
-    return webClient.post()
+    return webClient.get()
         .uri(uriBuilder -> uriBuilder.path(BOOK_URL_COUNT).build())
         .exchange()
         .flatMap(response -> response.bodyToMono(Long.class));
