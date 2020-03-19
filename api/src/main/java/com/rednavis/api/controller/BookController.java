@@ -9,16 +9,18 @@ import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_SAVE;
 
 import com.rednavis.api.property.MaasProperty;
 import com.rednavis.shared.dto.book.Book;
-import com.rednavis.shared.dto.book.BookPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -56,10 +58,10 @@ public class BookController {
    * @param book book
    * @return
    */
-  @PostMapping(BOOK_URL_SAVE)
+  @PutMapping(BOOK_URL_SAVE)
   public Mono<Book> save(@RequestBody Book book) {
     WebClient webClient = createWebClient();
-    return webClient.post()
+    return webClient.put()
         .uri(uriBuilder -> uriBuilder.path(BOOK_URL_SAVE).build())
         .body(BodyInserters.fromValue(book))
         .exchange()
@@ -69,16 +71,19 @@ public class BookController {
   /**
    * findAll.
    *
-   * @param bookPage bookPage
+   * @param page page
+   * @param size size
    * @return
    */
-  @PostMapping(BOOK_URL_FINDALL)
-  public Flux<Book> findAll(@RequestBody BookPage bookPage) {
-    log.info("findAll [bookPage: {}]", bookPage);
+  @GetMapping(BOOK_URL_FINDALL)
+  public Flux<Book> findAll(@RequestParam int page, @RequestParam int size) {
+    log.info("findAll get [page: {}, size: {}]", page, size);
     WebClient webClient = createWebClient();
-    return webClient.post()
-        .uri(uriBuilder -> uriBuilder.path(BOOK_URL_FINDALL).build())
-        .body(BodyInserters.fromValue(bookPage))
+    return webClient.get()
+        .uri(uriBuilder -> uriBuilder.path(BOOK_URL_FINDALL)
+            .queryParam("page", page)
+            .queryParam("size", size)
+            .build())
         .exchange()
         .flatMapMany(response -> response.bodyToFlux(Book.class));
   }
@@ -100,15 +105,16 @@ public class BookController {
   /**
    * delete.
    *
-   * @param book book
+   * @param bookId bookId
    */
-  @PostMapping(BOOK_URL_DELETE)
+  @DeleteMapping(BOOK_URL_DELETE)
   @ResponseStatus(value = HttpStatus.OK)
-  public void delete(@RequestBody Book book) {
+  public void delete(@RequestParam String bookId) {
     WebClient webClient = createWebClient();
-    webClient.post()
-        .uri(uriBuilder -> uriBuilder.path(BOOK_URL_DELETE).build())
-        .body(BodyInserters.fromValue(book))
+    webClient.delete()
+        .uri(uriBuilder -> uriBuilder.path(BOOK_URL_DELETE)
+            .queryParam("bookId", bookId)
+            .build())
         .exchange();
   }
 
