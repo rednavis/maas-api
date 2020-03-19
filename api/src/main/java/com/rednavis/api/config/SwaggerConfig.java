@@ -71,6 +71,11 @@ public class SwaggerConfig {
     return createNewGroup(groupInfo);
   }
 
+  /**
+   * bookOpenApi.
+   *
+   * @return
+   */
   @Bean
   public GroupedOpenApi bookOpenApi() {
     GroupInfo groupInfo = GroupInfo.builder()

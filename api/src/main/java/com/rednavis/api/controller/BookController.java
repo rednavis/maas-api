@@ -1,6 +1,7 @@
 package com.rednavis.api.controller;
 
 import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL;
+import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_COUNT;
 import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_DELETE;
 import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_FINDALL;
 import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_INSERT;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,12 @@ public class BookController {
 
   private final MaasProperty maasProperty;
 
+  /**
+   * insert.
+   *
+   * @param book book
+   * @return
+   */
   @PostMapping(BOOK_URL_INSERT)
   public Mono<Book> insert(@RequestBody Book book) {
     WebClient webClient = createWebClient();
@@ -42,6 +50,12 @@ public class BookController {
         .flatMap(response -> response.bodyToMono(Book.class));
   }
 
+  /**
+   * save.
+   *
+   * @param book book
+   * @return
+   */
   @PostMapping(BOOK_URL_SAVE)
   public Mono<Book> save(@RequestBody Book book) {
     WebClient webClient = createWebClient();
@@ -52,6 +66,12 @@ public class BookController {
         .flatMap(response -> response.bodyToMono(Book.class));
   }
 
+  /**
+   * findAll.
+   *
+   * @param bookPage bookPage
+   * @return
+   */
   @PostMapping(BOOK_URL_FINDALL)
   public Flux<Book> findAll(@RequestBody BookPage bookPage) {
     log.info("findAll [bookPage: {}]", bookPage);
@@ -63,6 +83,25 @@ public class BookController {
         .flatMapMany(response -> response.bodyToFlux(Book.class));
   }
 
+  /**
+   * count.
+   *
+   * @return
+   */
+  @GetMapping(BOOK_URL_COUNT)
+  public Mono<Long> count() {
+    WebClient webClient = createWebClient();
+    return webClient.post()
+        .uri(uriBuilder -> uriBuilder.path(BOOK_URL_COUNT).build())
+        .exchange()
+        .flatMap(response -> response.bodyToMono(Long.class));
+  }
+
+  /**
+   * delete.
+   *
+   * @param book book
+   */
   @PostMapping(BOOK_URL_DELETE)
   @ResponseStatus(value = HttpStatus.OK)
   public void delete(@RequestBody Book book) {
