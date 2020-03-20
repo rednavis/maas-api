@@ -71,18 +71,18 @@ public class BookController {
   /**
    * findAll.
    *
-   * @param page page
-   * @param size size
+   * @param limit  limit
+   * @param offset offset
    * @return
    */
   @GetMapping(BOOK_URL_FINDALL)
-  public Flux<Book> findAll(@RequestParam int page, @RequestParam int size) {
-    log.info("findAll get [page: {}, size: {}]", page, size);
+  public Flux<Book> findAll(@RequestParam int limit, @RequestParam int offset) {
+    log.info("findAll get [limit: {}, offset: {}]", limit, offset);
     WebClient webClient = createWebClient();
     return webClient.get()
         .uri(uriBuilder -> uriBuilder.path(BOOK_URL_FINDALL)
-            .queryParam("page", page)
-            .queryParam("size", size)
+            .queryParam("limit", limit)
+            .queryParam("offset", offset)
             .build())
         .exchange()
         .flatMapMany(response -> response.bodyToFlux(Book.class));
@@ -109,13 +109,15 @@ public class BookController {
    */
   @DeleteMapping(BOOK_URL_DELETE)
   @ResponseStatus(value = HttpStatus.OK)
-  public void delete(@RequestParam String bookId) {
+  public Mono<Void> delete(@RequestParam String bookId) {
+    log.info("delete [bookId: {}]", bookId);
     WebClient webClient = createWebClient();
-    webClient.delete()
+    return webClient.delete()
         .uri(uriBuilder -> uriBuilder.path(BOOK_URL_DELETE)
             .queryParam("bookId", bookId)
             .build())
-        .exchange();
+        .exchange()
+        .flatMap(response -> response.bodyToMono(Void.class));
   }
 
   private WebClient createWebClient() {
