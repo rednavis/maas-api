@@ -1,7 +1,6 @@
 package com.rednavis.api.exception;
 
 import java.util.function.Function;
-
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

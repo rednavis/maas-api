@@ -6,7 +6,6 @@ import static com.rednavis.database.mapper.MapperProvider.USER_MAPPER;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
-
 import com.rednavis.auth.jwt.JwtTokenEnum;
 import com.rednavis.auth.jwt.JwtTokenInfo;
 import com.rednavis.auth.jwt.JwtTokenService;

@@ -4,7 +4,6 @@ import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
 import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_PATTERN;
 
 import java.util.List;
-
 import com.rednavis.auth.security.JwtReactiveAuthenticationManager;
 import com.rednavis.auth.security.JwtServerSecurityContextRepository;
 import lombok.extern.slf4j.Slf4j;

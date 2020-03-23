@@ -1,7 +1,6 @@
 package com.rednavis.database.entity;
 
 import java.time.Instant;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;

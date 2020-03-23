@@ -5,7 +5,6 @@ import static com.rednavis.shared.util.StringUtils.BEARER_SPACE;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-
 import com.rednavis.auth.jwt.JwtTokenEnum;
 import com.rednavis.auth.jwt.JwtTokenService;
 import lombok.RequiredArgsConstructor;

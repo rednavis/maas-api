@@ -1,7 +1,6 @@
 package com.rednavis.database.mapper;
 
 import java.util.List;
-
 import com.rednavis.database.entity.UserEntity;
 import com.rednavis.shared.dto.user.User;
 import org.mapstruct.Mapper;

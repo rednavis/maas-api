@@ -1,7 +1,6 @@
 package com.rednavis.core.service;
 
 import java.util.Objects;
-
 import com.rednavis.shared.security.CurrentUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

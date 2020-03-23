@@ -1,7 +1,6 @@
 package com.rednavis.api;
 
 import java.util.Set;
-
 import com.rednavis.auth.AuthModule;
 import com.rednavis.auth.service.password.PasswordService;
 import com.rednavis.core.CoreModule;

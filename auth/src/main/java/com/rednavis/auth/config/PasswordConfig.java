@@ -2,7 +2,6 @@ package com.rednavis.auth.config;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.vt.middleware.password.AlphabeticalCharacterRule;
 import edu.vt.middleware.password.AlphabeticalSequenceRule;
 import edu.vt.middleware.password.DigitCharacterRule;

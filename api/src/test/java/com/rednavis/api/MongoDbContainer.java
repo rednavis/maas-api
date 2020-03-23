@@ -1,7 +1,6 @@
 package com.rednavis.api;
 
 import javax.validation.constraints.NotNull;
-
 import org.testcontainers.containers.GenericContainer;
 
 public class MongoDbContainer extends GenericContainer<MongoDbContainer> {

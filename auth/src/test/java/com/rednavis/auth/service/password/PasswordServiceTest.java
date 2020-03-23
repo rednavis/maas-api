@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
-
 import edu.vt.middleware.password.PasswordData;
 import edu.vt.middleware.password.PasswordValidator;
 import edu.vt.middleware.password.RuleResult;

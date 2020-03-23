@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
-
 import com.rednavis.api.MaasApiApplication;
 import com.rednavis.api.MaasApiApplicationTest;
 import com.rednavis.auth.jwt.JwtTokenEnum;

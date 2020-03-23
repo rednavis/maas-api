@@ -1,7 +1,6 @@
 package com.rednavis.database.entity;
 
 import java.util.Set;
-
 import com.rednavis.shared.dto.user.RoleEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

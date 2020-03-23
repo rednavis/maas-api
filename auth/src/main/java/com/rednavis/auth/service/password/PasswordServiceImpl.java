@@ -2,7 +2,6 @@ package com.rednavis.auth.service.password;
 
 import java.util.Collections;
 import java.util.List;
-
 import com.rednavis.core.exception.MaasApiException;
 import edu.vt.middleware.password.Password;
 import edu.vt.middleware.password.PasswordData;

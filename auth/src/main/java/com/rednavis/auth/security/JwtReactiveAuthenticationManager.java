@@ -4,7 +4,6 @@ import static com.rednavis.core.mapper.MapperProvider.CURRENT_USER_MAPPER;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.User;
 import com.rednavis.shared.security.CurrentUser;

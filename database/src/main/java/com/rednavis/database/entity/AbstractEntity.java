@@ -1,7 +1,6 @@
 package com.rednavis.database.entity;
 
 import java.time.Instant;
-
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
