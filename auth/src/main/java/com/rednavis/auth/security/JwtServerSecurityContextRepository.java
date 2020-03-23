@@ -2,11 +2,12 @@ package com.rednavis.auth.security;
 
 import static com.rednavis.shared.util.StringUtils.BEARER_SPACE;
 
-import com.rednavis.auth.jwt.JwtTokenEnum;
-import com.rednavis.auth.jwt.JwtTokenService;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+
+import com.rednavis.auth.jwt.JwtTokenEnum;
+import com.rednavis.auth.jwt.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;

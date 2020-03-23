@@ -1,12 +1,13 @@
 package com.rednavis.auth.service.password;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.rednavis.core.exception.MaasApiException;
 import edu.vt.middleware.password.Password;
 import edu.vt.middleware.password.PasswordData;
 import edu.vt.middleware.password.PasswordValidator;
 import edu.vt.middleware.password.RuleResult;
-import java.util.Collections;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

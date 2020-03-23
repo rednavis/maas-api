@@ -5,6 +5,8 @@ import static com.rednavis.database.mapper.MapperProvider.USER_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Instant;
+
 import com.rednavis.api.MaasApiApplication;
 import com.rednavis.api.MaasApiApplicationTest;
 import com.rednavis.auth.jwt.JwtTokenEnum;
@@ -18,7 +20,6 @@ import com.rednavis.shared.rest.request.RefreshTokenRequest;
 import com.rednavis.shared.rest.request.SignInRequest;
 import com.rednavis.shared.rest.response.SignInResponse;
 import com.rednavis.shared.security.CurrentUser;
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

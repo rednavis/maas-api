@@ -1,7 +1,8 @@
 package com.rednavis.database.entity;
 
-import com.rednavis.shared.dto.user.RoleEnum;
 import java.util.Set;
+
+import com.rednavis.shared.dto.user.RoleEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;

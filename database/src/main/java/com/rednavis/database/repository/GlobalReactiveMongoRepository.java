@@ -1,6 +1,7 @@
 package com.rednavis.database.repository;
 
 import java.io.Serializable;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;

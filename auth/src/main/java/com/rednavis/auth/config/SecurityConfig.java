@@ -3,9 +3,10 @@ package com.rednavis.auth.config;
 import static com.rednavis.shared.util.RestUrlUtils.AUTH_URL_PATTERN;
 import static com.rednavis.shared.util.RestUrlUtils.BOOK_URL_PATTERN;
 
+import java.util.List;
+
 import com.rednavis.auth.security.JwtReactiveAuthenticationManager;
 import com.rednavis.auth.security.JwtServerSecurityContextRepository;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

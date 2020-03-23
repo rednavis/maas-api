@@ -3,6 +3,10 @@ package com.rednavis.auth.service.auth;
 import static com.rednavis.core.mapper.MapperProvider.CURRENT_USER_MAPPER;
 import static com.rednavis.database.mapper.MapperProvider.USER_MAPPER;
 
+import java.time.Instant;
+import java.util.Objects;
+import java.util.Set;
+
 import com.rednavis.auth.jwt.JwtTokenEnum;
 import com.rednavis.auth.jwt.JwtTokenInfo;
 import com.rednavis.auth.jwt.JwtTokenService;
@@ -21,9 +25,6 @@ import com.rednavis.shared.rest.response.SignInResponse;
 import com.rednavis.shared.rest.response.SignUpResponse;
 import com.rednavis.shared.security.CurrentUser;
 import com.rednavis.shared.util.StringUtils;
-import java.time.Instant;
-import java.util.Objects;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

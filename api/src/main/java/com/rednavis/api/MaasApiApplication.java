@@ -1,5 +1,7 @@
 package com.rednavis.api;
 
+import java.util.Set;
+
 import com.rednavis.auth.AuthModule;
 import com.rednavis.auth.service.password.PasswordService;
 import com.rednavis.core.CoreModule;
@@ -7,7 +9,6 @@ import com.rednavis.database.DatabaseModule;
 import com.rednavis.database.service.UserService;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.dto.user.User;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

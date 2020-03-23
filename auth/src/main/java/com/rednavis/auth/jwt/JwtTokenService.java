@@ -2,6 +2,14 @@ package com.rednavis.auth.jwt;
 
 import static java.time.Instant.now;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -14,13 +22,6 @@ import com.rednavis.core.exception.JwtException;
 import com.rednavis.core.exception.JwtRefreshTokenExpiredException;
 import com.rednavis.shared.dto.user.RoleEnum;
 import com.rednavis.shared.security.CurrentUser;
-import java.text.ParseException;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;

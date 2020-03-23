@@ -1,5 +1,8 @@
 package com.rednavis.auth.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.vt.middleware.password.AlphabeticalCharacterRule;
 import edu.vt.middleware.password.AlphabeticalSequenceRule;
 import edu.vt.middleware.password.DigitCharacterRule;
@@ -13,8 +16,6 @@ import edu.vt.middleware.password.RepeatCharacterRegexRule;
 import edu.vt.middleware.password.Rule;
 import edu.vt.middleware.password.UppercaseCharacterRule;
 import edu.vt.middleware.password.WhitespaceRule;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

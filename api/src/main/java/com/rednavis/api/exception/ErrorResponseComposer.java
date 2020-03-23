@@ -1,12 +1,13 @@
 package com.rednavis.api.exception;
 
-import com.rednavis.api.exception.handlers.AbstractExceptionHandler;
-import com.rednavis.shared.rest.response.ErrorResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.rednavis.api.exception.handlers.AbstractExceptionHandler;
+import com.rednavis.shared.rest.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
